@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# A Pure Lisp interpreter by POSIX-conformant shell
+# A Pure LISP interpreter by POSIX-conformant shell
 # Evaluator defined in McCarthy's 1960 paper
 # with basic functions for conscell operations,
 # S-expression input/output and simple REPL
