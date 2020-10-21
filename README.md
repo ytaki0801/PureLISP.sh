@@ -2,7 +2,7 @@
 
 # jmclisp.sh
 
-This software is for creating a Pure LISP interpreter written in shell script conformed to POSIX shell,
+This software is a Pure LISP interpreter written in shell script conformed to POSIX shell,
 inspired from [John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
 and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html).
 
@@ -14,7 +14,8 @@ and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com
 
 ## How to use
 
-Run the script to use REPL, like the following on [busybox-w32](https://frippery.org/busybox/) in a Command Prompt of Windows 10. **You must type a blank line after input of LISP codes to eval**.
+Run the script to use REPL, like the following on [busybox-w32](https://frippery.org/busybox/) in a Command Prompt of Windows 10.
+**You must type a blank line after input of LISP codes to eval**.
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh jmclisp.sh
@@ -130,7 +131,8 @@ $
 
 * Overwrited second arguments of two-argument functions in serial processing by the evaluator
 
-This is a **fatal error for LISP processing** derived from using global variables in the shell script to conform to a POSIX shell, like the following:
+This is a **fatal error for LISP processing**,
+derived from using global variables in the shell script to conform to a POSIX shell, like the following:
 
 ```
 S> (cons 'a (cons 'b (cons 'c nil)))
