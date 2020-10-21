@@ -2,11 +2,11 @@
 
 # jmclisp.sh
 
-This project is for creating a Pure LISP interpreter written in shell script conformed to POSIX shell,
+This software is for creating a Pure LISP interpreter written in shell script conformed to POSIX shell,
 inspired from [John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
 and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html).
 
-## Purpose of this project
+## Purpose of this software
 
 * To use in education and research of basic LISP language processing easily
 
