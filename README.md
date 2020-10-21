@@ -65,6 +65,57 @@ S> exit
 C:\Users\TAKIZAWA Yozo\busybox>
 ```
 
+Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option, prompt suppression mode, via redirection in a shell interpreter.
+
+```
+$ cat sample.jmclisp
+(def mapcar
+  '(lambda (f x)
+     (cond ((null x) nil)
+           (t (cons (f (car x))
+                    (mapcar f (cdr x)))))))
+
+(mapcar 'car '((hoge . 10) (hage . 20) (hige . 30)))
+
+(mapcar 'cdr '((hoge . 10) (hage . 20) (hige . 30)))
+
+(def filter
+  '(lambda (f x)
+     (cond ((null x) nil)
+           ((f (car x))
+            (cons (car x) (filter f (cdr x))))
+           (t (filter f (cdr x))))))
+
+(filter
+  '(lambda (x) (eq (car x) 'o))
+  '((o . 1) (i . 2) (o . 3) (a . 4) (z . 5) (o . 6)))
+
+(def reduce
+  '(lambda (f L i)
+     (cond ((null L) i)
+           (t (f (car L) (reduce f (cdr L) i))))))
+
+(reduce 'cons '(a b c) '(d e f g))
+
+(def rappend '(lambda (x y) (reduce 'cons x y)))
+
+(reduce 'rappend '((a b) (c d e) (f) (g h i)) '())
+
+exit
+
+$ sh jmclisp.sh -s < sample.jmclisp
+mapcar
+(hoge hage hige)
+(10 20 30)
+filter
+((o . 1) (o . 3) (o . 6))
+reduce
+(a b c d e f g)
+rappend
+(a b c d e f g h i)
+$ 
+```
+
 ## LISP Specification
 
 * Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq` and utility functions to define the evaluator
@@ -91,8 +142,6 @@ S> (cons (cons (cons nil 'a) 'b) 'c)
 ```
 
 * More suitable error checks
-
-* Implementation of loading LISP code files
 
 ## License
 
