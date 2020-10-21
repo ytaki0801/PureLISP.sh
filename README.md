@@ -8,13 +8,13 @@ and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com
 
 ## Purpose of this project
 
-* To use in education and research of basic LISP language processing
+* To use in education and research of basic LISP language processing easily
 
 * To use in ALL computer environments by running on a POSIX-conformant shell
 
 ## How to use
 
-Run the script to use REPL, like the following on [busybox-w32](https://frippery.org/busybox/) in a Commapd Prompt of Windows 10. You must type a blank line after input LISP codes.
+Run the script to use REPL, like the following on [busybox-w32](https://frippery.org/busybox/) in a Command Prompt of Windows 10. **You must type a blank line after input LISP codes**.
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh jmclisp.sh
@@ -76,7 +76,7 @@ C:\Users\TAKIZAWA Yozo\busybox>
 
 * Overwrited second arguments of two-argument functions in serial processing by the evaluator
 
-This is fatal error for LISP processing because of using global variables in the shell script, like the following:
+This is a **fatal error for LISP processing** derived from using global variables in the shell script to conform to a POSIX shell, like the following:
 
 ```
 S> (cons 'a (cons 'b (cons 'c nil)))
@@ -89,7 +89,7 @@ S> (cons (cons (cons nil 'a) 'b) 'c)
 
 * More suitable error checks
 
-* Implementation of load LISP code files
+* Implementation of loading LISP code files
 
 ## License
 
