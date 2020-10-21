@@ -119,9 +119,11 @@ $
 
 ## LISP Specification
 
-* Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq` and utility functions to define the evaluator
+* Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq`, `and`, `or` and utility functions to define the evaluator
 
-* Special forms: `quote`, `cond`, `lambda`, `def` (to set values including lambda expressions in global environment)
+* Special forms: `quote`, `cond`, `lambda`
+
+* Special form `def` to bind quoted values, including lambda expressions, with variables in global environment
 
 * S-expression input and output functions
 
