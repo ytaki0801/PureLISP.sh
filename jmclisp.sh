@@ -24,11 +24,11 @@ car () { eval CARR="\$CAR${1%%.*}"; }
 cdr () { eval CDRR="\$CDR${1%%.*}"; }
 
 atom () {
-  if [ ${1##*.} = conscell ]; then
+  if [ "${1##*.}" = conscell ]; then
     ATOMR=nil
   else
     ATOMR=t
-  fi > /dev/null 2>&1
+  fi
 }
 
 eq () {
@@ -39,12 +39,12 @@ eq () {
     atom $2
     if [ $ATOMR = nil ]; then
       EQR=nil
-    elif [ $1 = $2 ]; then
+    elif [ "$1" = "$2" ]; then
       EQR=t
     else
       EQR=nil
     fi
-  fi > /dev/null 2>&1
+  fi
 }
 
 
@@ -98,7 +98,7 @@ replace_all_posix() {
 }
 
 s_lex0 () {
-  replace_all_posix sl0INI "$1" "$LF" ""
+  replace_all_posix sl0INI " $1 " "$LF" ""
   replace_all_posix sl0LPS "$sl0INI" "(" " ( "
   replace_all_posix sl0RPS "$sl0LPS" ")" " ) "
   replace_all_posix sl0RET "$sl0RPS" "'" " ' "
@@ -225,20 +225,20 @@ s_list () {
 }
 
 s_pair () {
-  s_null $1 && span1=$SNULLR
-  s_null $2 && span2=$SNULLR
-  if [ $span1 = t -a $span2 = t ]; then
+  s_null $1 && spanr=$SNULLR
+  s_null $2
+  if [ $spanr = t -a $SNULLR = t ]; then
     SPAIRR=nil
   else
-    atom $1 && spaat1=$ATOMR
-    atom $2 && spaat2=$ATOMR
-    if [ $spaat1 = nil -a $spaat2 = nil ]; then
-      cdr $1 && spad1=$CDRR
-      cdr $2 && spad2=$CDRR
-      s_pair $spad1 $spad2
-      car $1 && spaa1=$CARR
-      car $2 && spaa2=$CARR
-      s_list $spaa1 $spaa2
+    atom $1 && spaatr=$ATOMR
+    atom $2
+    if [ $spaatr = nil -a $ATOMR = nil ]; then
+      cdr $1 && spadr=$CDRR
+      cdr $2
+      s_pair $spadr $CDRR
+      car $1 && spaar=$CARR
+      car $2
+      s_list $spaar $CARR
       cons $SLISTR $SPAIRR
       SPAIRR=$CONSR
     else
@@ -285,9 +285,9 @@ s_eval () {
         ;;
       eq)
         caddr $1 && s_eval $CADDRR $2
-        seve2=$SEVALR
+        seveqer=$SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        eq $SEVALR $seve2 && SEVALR=$EQR
+        eq $SEVALR $seveqer && SEVALR=$EQR
         ;;
       car)
         cadr $1 && s_eval $CADRR $2
@@ -299,9 +299,9 @@ s_eval () {
         ;;
       cons)
         caddr $1 && s_eval $CADDRR $2
-        seve2=$SEVALR
+        sevconser=$SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        cons $SEVALR $seve2
+        cons $SEVALR $sevconser
         SEVALR=$CONSR
         ;;
       cond)
@@ -311,9 +311,9 @@ s_eval () {
       def)
         caddr $1
         s_eval $CADDRR $2 && cons $SEVALR nil
-        seve2=$CONSR
+        sevdefcr=$CONSR
         cadr $1 && cons $CADRR nil
-        s_pair $CONSR $seve2
+        s_pair $CONSR $sevdefcr
         s_append $SPAIRR $2
         cons def $SAPPENDR
         SEVALR=$CONSR
@@ -324,36 +324,34 @@ s_eval () {
         ;;
       append)
         caddr $1 && s_eval $CADDRR $2
-        seve2=$SEVALR
+        sevappender=$SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        seve1=$SEVALR
-        s_append $SEVALR $seve2
+        s_append $SEVALR $sevappender
         SEVALR=$SAPPENDR
         ;;
       list)
         caddr $1 && s_eval $CADDRR $2
-        seve2=$SEVALR
+        sevlister=$SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        s_list $SEVALR $seve2
+        s_list $SEVALR $sevlister
         SEVALR=$SLISTR
         ;;
       pair)
         caddr $1 && s_eval $CADDRR $2
-        seve2=$SEVALR
+        sevpairer=$SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        seve1=$SEVALR
-        s_pair $SEVALR $seve2
+        s_pair $SEVALR $sevpairer
         SEVALR=$SPAIRR
         ;;
       assocl)
         caddr $1 && s_eval $CADDRR $2
-        seve2=$SEVALR
+        sevassocler=$SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        s_assoc $SEVALR $seve2
+        s_assoc $SEVALR $sevassocler
         SEVALR=$SASSOCR
         ;;
       or)
-        cadr  $1 && s_eval $CADRR $2
+        cadr $1 && s_eval $CADRR $2
         if [ $SEVALR = t ]; then
           SEVALR=t
         else
@@ -361,7 +359,7 @@ s_eval () {
         fi
         ;;
       and)
-        cadr  $1 && s_eval $CADRR $2
+        cadr $1 && s_eval $CADRR $2
         if [ $SEVALR = t ]; then
           caddr $1 && s_eval $CADDRR $2
         else
@@ -431,7 +429,9 @@ s_replread () {
 }
 
 s_repl () {
-  echo -n "S> "
+  if [ ! $PROMPT = nil ]; then
+    echo -n "S> "
+  fi
   s_replread
   if [ ! $SREPLREADR = exit ]; then
     s_lex $SREPLREADR
@@ -460,5 +460,9 @@ s_repl () {
 CNUM=0
 TNUM=0
 ENV=nil
+if [ "$1" != "-s" ]; then
+  PROMPT=t
+else
+  PROMPT=nil
+fi
 s_repl
-
