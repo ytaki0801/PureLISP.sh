@@ -123,7 +123,7 @@ $
 
 * Special forms: `quote`, `cond`, `lambda`
 
-* Special form `def` to bind quoted values, including lambda expressions, with variables in global environment
+* Special form `def` to bind variables in global environment with quoted values, including lambda expressions
 
 * S-expression input and output functions
 
