@@ -10,13 +10,16 @@ and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com
 
 * To use in education and research of basic LISP language processing
 
-* To use in ALL computer environments by using POSIX-conformant shell
+* To use in ALL computer environments by running on a POSIX-conformant shell
 
 ## LISP Specification
 
 * Built-in functions for conscell operation: cons, car, cdr, atom, eq and utility functions to define the evaluator
+
 * Special forms: quote, cond, lambda, def (to set values including lambda expressions in global environment)
+
 * S-expression input and output functions
+
 * Simple REPL
 
 ## Bugs and TODO
