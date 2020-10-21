@@ -409,7 +409,7 @@ evlis () {
 }
 
 
-# simple REPL
+# Simple REPL
 
 s_replread () {
   SREPLREADR=""
