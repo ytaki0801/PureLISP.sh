@@ -64,9 +64,9 @@ C:\Users\TAKIZAWA Yozo\busybox>
 
 ## LISP Specification
 
-* Built-in functions for conscell operation: cons, car, cdr, atom, eq and utility functions to define the evaluator
+* Built-in functions for conscell operation: `cons`, `car`, `cdr`, `atom`, `eq` and utility functions to define the evaluator
 
-* Special forms: quote, cond, lambda, def (to set values including lambda expressions in global environment)
+* Special forms: `quote`, `cond`, `lambda`, `def` (to set values including lambda expressions in global environment)
 
 * S-expression input and output functions
 
