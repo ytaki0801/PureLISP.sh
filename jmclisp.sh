@@ -87,11 +87,21 @@ s_display () {
 
 IFS=''
 
+LF="
+"
+
+replace_all_posix() {
+  set -- "$1" "$2" "$3" "$4" ""
+  until [ _"$2" = _"${2#*"$3"}" ] && eval "$1=\$5\$2"; do
+    set -- "$1" "${2#*"$3"}" "$3" "$4" "$5${2%%"$3"*}$4"
+  done
+}
+
 s_lex0 () {
-  sl0INI=`echo " $1 "  | tr  -d "\n"`
-  sl0LPS=`echo $sl0INI | sed -e "s/(/ ( /g"`
-  sl0RPS=`echo $sl0LPS | sed -e "s/)/ ) /g"`
-  sl0RET=`echo $sl0RPS | sed -e "s/'/ ' /g"`
+  replace_all_posix sl0INI "$1" "$LF" ""
+  replace_all_posix sl0LPS "$sl0INI" "(" " ( "
+  replace_all_posix sl0RPS "$sl0LPS" ")" " ) "
+  replace_all_posix sl0RET "$sl0RPS" "'" " ' "
 }
 
 s_lex1 () {
