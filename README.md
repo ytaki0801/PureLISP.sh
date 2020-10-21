@@ -31,7 +31,7 @@ S> (mapcar 'car '((hoge . 10) (hage . 20) (hige . 30)))
 S> (mapcar 'cdr '((hoge . 10) (hage . 20) (hige . 30)))
 
 (10 20 30)
-> (def filter
+S> (def filter
      '(lambda (f x)
         (cond ((null x) nil)
               ((f (car x))
