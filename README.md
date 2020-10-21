@@ -14,7 +14,7 @@ and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com
 
 ## How to use
 
-Run the script to use REPL, like the following on [busybox-w32](https://frippery.org/busybox/) in a Command Prompt of Windows 10. **You must type a blank line after input LISP codes**.
+Run the script to use REPL, like the following on [busybox-w32](https://frippery.org/busybox/) in a Command Prompt of Windows 10. **You must type a blank line after input of LISP codes**.
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh jmclisp.sh
