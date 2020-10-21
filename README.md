@@ -53,7 +53,10 @@ reduce
 S> (reduce 'cons '(a b c) '(d e f g))
 
 (a b c d e f g)
-S> (reduce 'append '((a b) (c d e) (f) (g h i)) '())
+S> (def rappend '(lambda (x y) (reduce 'cons x y)))
+
+rappend
+S> (reduce 'rappend '((a b) (c d e) (f) (g h i)) '())
 
 (a b c d e f g h i)
 S> exit
