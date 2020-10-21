@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# JMC Lisp by POSIX-conformant shell
+# A Pure Lisp interpreter by POSIX-conformant shell
 # Evaluator defined in McCarthy's 1960 paper
-# with basic functions for conscell operation,
+# with basic functions for conscell operations,
 # S-expression input/output and simple REPL
 #
 # This code is licensed under CC0.
@@ -10,7 +10,7 @@
 #
 
 
-# Basic functions for conscell operation:
+# Basic functions for conscell operations:
 # cons, car, cdr, atom, eq
 
 cons () {
