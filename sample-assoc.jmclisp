@@ -6,18 +6,18 @@
 
 (def vs (mkassoc '(hoge hage hige) '(10 20 30)))
 
-(def assq
+(def assoc
   '(lambda (k vs)
      (cond ((eq vs '()) nil)
            ((eq (car (car vs)) k)
             (car vs))
-           (t (assq k (cdr vs))))))
+           (t (assoc k (cdr vs))))))
 
-(assq 'hage vs)
+(assoc 'hage vs)
 
-(car (assq 'hage vs))
+(car (assoc 'hage vs))
 
-(cdr (assq 'hage vs))
+(cdr (assoc 'hage vs))
 
 exit
 

@@ -70,7 +70,7 @@ Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option, promp
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox sh
-~/busybox $ cat sample-assq.jmclisp
+~/busybox $ cat sample-assoc.jmclisp
 (def mkassoc
   '(lambda (a b)
      (cond ((or (null a) (null b)) nil)
@@ -79,25 +79,25 @@ C:\Users\TAKIZAWA Yozo\busybox>busybox sh
 
 (def vs (mkassoc '(hoge hage hige) '(10 20 30)))
 
-(def assq
+(def assoc
   '(lambda (k vs)
      (cond ((eq vs '()) nil)
            ((eq (car (car vs)) k)
             (car vs))
-           (t (assq k (cdr vs))))))
+           (t (assoc k (cdr vs))))))
 
-(assq 'hage vs)
+(assoc 'hage vs)
 
-(car (assq 'hage vs))
+(car (assoc 'hage vs))
 
-(cdr (assq 'hage vs))
+(cdr (assoc 'hage vs))
 
 exit
 
-~/busybox $ ./jmclisp.sh -s < sample-assq.jmclisp
+~/busybox $ ./jmclisp.sh -s < sample-assoc.jmclisp
 mkassoc
 vs
-assq
+assoc
 (hage . 20)
 hage
 20
