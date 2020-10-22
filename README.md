@@ -69,7 +69,8 @@ C:\Users\TAKIZAWA Yozo\busybox>
 Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option, prompt suppression mode, via redirection in a shell interpreter.
 
 ```
-$ cat sample-assq.jmclisp
+C:\Users\TAKIZAWA Yozo\busybox>busybox sh
+~/busybox $ cat sample-assq.jmclisp
 (def mkassoc
   '(lambda (a b)
      (cond ((or (null a) (null b)) nil)
@@ -93,13 +94,14 @@ $ cat sample-assq.jmclisp
 
 exit
 
-$ ./jmclisp.sh -s < sample-assq.jmclisp
+~/busybox $ ./jmclisp.sh -s < sample-assq.jmclisp
 mkassoc
 vs
 assq
 (hage . 20)
 hage
 20
+~/busybox $
 ```
 
 ## LISP Specification
