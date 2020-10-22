@@ -69,52 +69,37 @@ C:\Users\TAKIZAWA Yozo\busybox>
 Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option, prompt suppression mode, via redirection in a shell interpreter.
 
 ```
-$ cat sample.jmclisp
-(def mapcar
-  '(lambda (f x)
-     (cond ((null x) nil)
-           (t (cons (f (car x))
-                    (mapcar f (cdr x)))))))
+$ cat sample-assq.jmclisp
+(def mkassoc
+  '(lambda (a b)
+     (cond ((or (null a) (null b)) nil)
+           (t (cons (cons (car a) (car b))
+                    (mkassoc (cdr a) (cdr b)))))))
 
-(mapcar 'car '((hoge . 10) (hage . 20) (hige . 30)))
+(def vs (mkassoc '(hoge hage hige) '(10 20 30)))
 
-(mapcar 'cdr '((hoge . 10) (hage . 20) (hige . 30)))
+(def assq
+  '(lambda (k vs)
+     (cond ((eq vs '()) nil)
+           ((eq (car (car vs)) k)
+            (car vs))
+           (t (assq k (cdr vs))))))
 
-(def filter
-  '(lambda (f x)
-     (cond ((null x) nil)
-           ((f (car x))
-            (cons (car x) (filter f (cdr x))))
-           (t (filter f (cdr x))))))
+(assq 'hage vs)
 
-(filter
-  '(lambda (x) (eq (car x) 'o))
-  '((o . 1) (i . 2) (o . 3) (a . 4) (z . 5) (o . 6)))
+(car (assq 'hage vs))
 
-(def reduce
-  '(lambda (f L i)
-     (cond ((null L) i)
-           (t (f (car L) (reduce f (cdr L) i))))))
-
-(reduce 'cons '(a b c) '(d e f g))
-
-(def rappend '(lambda (x y) (reduce 'cons x y)))
-
-(reduce 'rappend '((a b) (c d e) (f) (g h i)) '())
+(cdr (assq 'hage vs))
 
 exit
 
-$ sh jmclisp.sh -s < sample.jmclisp
-mapcar
-(hoge hage hige)
-(10 20 30)
-filter
-((o . 1) (o . 3) (o . 6))
-reduce
-(a b c d e f g)
-rappend
-(a b c d e f g h i)
-$ 
+$ ./jmclisp.sh -s < sample-assq.jmclisp
+mkassoc
+vs
+assq
+(hage . 20)
+hage
+20
 ```
 
 ## LISP Specification
@@ -130,20 +115,6 @@ $
 * Simple REPL with `exit` command and `-s` prompt suppression mode
 
 ## Bugs and TODO
-
-* Overwrited second arguments of two-argument functions in serial processing by the evaluator
-
-This is a **fatal error for LISP processing**,
-derived from using global variables in the shell script to conform to a POSIX shell, like the following:
-
-```
-S> (cons 'a (cons 'b (cons 'c nil)))
-
-(a b c)
-S> (cons (cons (cons nil 'a) 'b) 'c)
-
-(((() . a) . a) . a)
-```
 
 * More suitable error checks
 

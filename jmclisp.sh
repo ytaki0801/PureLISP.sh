@@ -171,7 +171,21 @@ s_syn () {
 }
 
 
-# Evaluator: s_eval and utility functions
+# Stack implementation for recursive calls
+
+stackpush () {
+  eval STACK$STACKNUM=$1
+  STACKNUM=$((STACKNUM+1))
+}
+
+stackpop ()
+{
+  STACKNUM=$((STACKNUM-1))
+  eval STACKPOPR="\$STACK$STACKNUM"
+}
+
+
+# The evaluator: s_eval and utility functions
 
 caar () {
   car $1
@@ -285,9 +299,11 @@ s_eval () {
         ;;
       eq)
         caddr $1 && s_eval $CADDRR $2
-        seveqer=$SEVALR
+        stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        eq $SEVALR $seveqer && SEVALR=$EQR
+        stackpop
+        eq $SEVALR $STACKPOPR
+        SEVALR=$EQR
         ;;
       car)
         cadr $1 && s_eval $CADRR $2
@@ -299,9 +315,10 @@ s_eval () {
         ;;
       cons)
         caddr $1 && s_eval $CADDRR $2
-        sevconser=$SEVALR
+        stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        cons $SEVALR $sevconser
+        stackpop
+        cons $SEVALR $STACKPOPR
         SEVALR=$CONSR
         ;;
       cond)
@@ -311,9 +328,10 @@ s_eval () {
       def)
         caddr $1
         s_eval $CADDRR $2 && cons $SEVALR nil
-        sevdefcr=$CONSR
+        stackpush $CONSR
         cadr $1 && cons $CADRR nil
-        s_pair $CONSR $sevdefcr
+        stackpop
+        s_pair $CONSR $STACKPOPR
         s_append $SPAIRR $2
         cons def $SAPPENDR
         SEVALR=$CONSR
@@ -324,30 +342,34 @@ s_eval () {
         ;;
       append)
         caddr $1 && s_eval $CADDRR $2
-        sevappender=$SEVALR
+        stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        s_append $SEVALR $sevappender
+        stackpop
+        s_append $SEVALR $STACKPOPR
         SEVALR=$SAPPENDR
         ;;
       list)
         caddr $1 && s_eval $CADDRR $2
-        sevlister=$SEVALR
+        stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        s_list $SEVALR $sevlister
+        stackpop
+        s_list $SEVALR $STACKPOPR
         SEVALR=$SLISTR
         ;;
       pair)
         caddr $1 && s_eval $CADDRR $2
-        sevpairer=$SEVALR
+        stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        s_pair $SEVALR $sevpairer
+        stackpopr
+        s_pair $SEVALR $STACKPOPR
         SEVALR=$SPAIRR
         ;;
       assocl)
         caddr $1 && s_eval $CADDRR $2
-        sevassocler=$SEVALR
+        stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        s_assoc $SEVALR $sevassocler
+        stackpop
+        s_assoc $SEVALR $STACKPOPR
         SEVALR=$SASSOCR
         ;;
       or)
@@ -459,6 +481,7 @@ s_repl () {
 
 CNUM=0
 TNUM=0
+STACKNUM=0
 ENV=nil
 if [ "$1" != "-s" ]; then
   PROMPT=t
