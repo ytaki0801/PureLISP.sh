@@ -110,7 +110,7 @@ hage
 
 * Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq`, `and`, `or` and utility functions to define the evaluator
 
-* Special forms: `quote`, `cond`, `lambda`
+* Special forms: `quote`, `cond`, `lambda` (dynammically scoped)
 
 * Special form `def` to bind variables in global environment with quoted values, including lambda expressions
 
