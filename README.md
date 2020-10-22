@@ -114,7 +114,7 @@ hage
 
 * Special form `def` to bind variables in global environment with quoted values, including lambda expressions
 
-* S-expression input and output functions
+* Simple S-expression input and output functions
 
 * Simple REPL with `exit` command and `-s` prompt suppression mode
 
