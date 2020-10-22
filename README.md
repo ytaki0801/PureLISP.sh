@@ -127,7 +127,7 @@ $
 
 * S-expression input and output functions
 
-* Simple REPL
+* Simple REPL with `exit` command and `-s` prompt suppression mode
 
 ## Bugs and TODO
 
