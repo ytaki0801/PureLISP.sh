@@ -9,7 +9,10 @@ inspired from [John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/re
 and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html).
 
 [![BusyBox](https://img.shields.io/badge/BusyBox-1.33.0-brightgreen)](https://www.busybox.net/)
-[![NetBSD sh](https://img.shields.io/badge/NetBSD_sh-20181212-brightgreen)](https://www.busybox.net/)
+[![NetBSD sh](https://img.shields.io/badge/NetBSD_sh-20181212-brightgreen)](http://cvsweb.netbsd.org/bsdweb.cgi/src/bin/sh/)
+[![dash](https://img.shields.io/badge/dash-0.5.10.2-brightgreen)](http://gondor.apana.org.au/~herbert/dash/)
+[![yash](https://img.shields.io/badge/yash-2.48-brightgreen)](https://yash.osdn.jp/index.html.en)
+[![ksh93](https://img.shields.io/badge/ksh93-93u+-brightgreen)](http://kornshell.org/)
 
 ## Purpose of this software
 
