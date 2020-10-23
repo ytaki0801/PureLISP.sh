@@ -8,6 +8,8 @@ This software is a Pure LISP interpreter written in shell script conformed to PO
 inspired from [John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
 and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html).
 
+[![BusyBox](https://img.shields.io/badge/BusyBox-1.33.0-brightgreen)](https://www.busybox.net/)
+
 ## Purpose of this software
 
 * To use in education and research of basic LISP language processing easily
