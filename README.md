@@ -6,7 +6,7 @@ Hash tag on SNS: [`#jmclisp_sh`](https://twitter.com/hashtag/jmclisp_sh)
 
 This software is a Pure LISP interpreter written in shell script conformed to POSIX shell,
 inspired from [John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
-and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html).
+and [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html).
 
 ## Purpose of this software
 
@@ -57,14 +57,26 @@ Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option, promp
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox sh
-~/busybox $ cat assoc.jmclisp
+~/busybox $ cat examples/assoc.jmclisp
+(def or '(lambda (a b) (cond (a t) (t b))))
+
 (def mkassoc
   '(lambda (a b)
-     (cond ((or (null a) (null b)) nil)
+     (cond ((or (eq a nil) (eq b nil)) nil)
            (t (cons (cons (car a) (car b))
-                    (mkassoc (cdr a) (cdr b)))))))
+                    (mkassoc (cdr a) (cdr b))))))) 
 
-(def vs (mkassoc '(hoge hage hige) '(10 20 30)))
+(def k '(Apple Orange Lemmon))
+
+(cons '= (cons k nil))
+
+(def v '(120 210 180))
+
+(cons '= (cons v nil))
+
+(def vs (mkassoc k v))
+
+(cons '= (cons '(mkassoc k v) (cons '= (cons vs 'nil))))
 
 (def assoc
   '(lambda (k vs)
@@ -73,27 +85,36 @@ C:\Users\TAKIZAWA Yozo\busybox>busybox sh
             (car vs))
            (t (assoc k (cdr vs))))))
 
-(assoc 'hage vs)
+(cons '(assoc 'Orange vs)
+(cons '= (cons (assoc 'Orange vs) nil)))
 
-(car (assoc 'hage vs))
+(cons '(car (assoc 'Orange vs))
+(cons '= (cons (car (assoc 'Orange vs)) nil)))
 
-(cdr (assoc 'hage vs))
+(cons '(cdr (assoc 'Orange vs))
+(cons '= (cons (cdr (assoc 'Orange vs)) nil)))
 
 exit
 
-~/busybox $ ./jmclisp.sh -s < assoc.jmclisp
+~/busybox $ ./jmclisp.sh -s < examples/assoc.jmclisp
+or
 mkassoc
+k
+(= (Apple Orange Lemmon))
+v
+(= (120 210 180))
 vs
+(= (mkassoc k v) = ((Apple . 120) (Orange . 210) (Lemmon . 180)))
 assoc
-(hage . 20)
-hage
-20
-~/busybox $
+((assoc (quote Orange) vs) = (Orange . 210))
+((car (assoc (quote Orange) vs)) = Orange)
+((cdr (assoc (quote Orange) vs)) = 210)
+~/busybox $ 
 ```
 
-## LISP Specification
+## LISP Specification in this software
 
-* Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq`, `and`, `or` and utility functions to define the evaluator
+* Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq`
 
 * Special forms: `quote`, `cond`, `lambda` (the arguments are dynamically scoped)
 
@@ -107,7 +128,7 @@ hage
 
 * More suitable error checks
 
-* Introducing lexically scoped variables in lambda expression
+* Introducing lexically scoped variables in lambda expressions
 
 ## License
 

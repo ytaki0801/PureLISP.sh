@@ -1,6 +1,6 @@
 (def reduce
   '(lambda (f L i)
-     (cond ((null L) i)
+     (cond ((eq L nil) i)
            (t (f (car L) (reduce f (cdr L) i))))))
 
 (def list1 '(a b c))

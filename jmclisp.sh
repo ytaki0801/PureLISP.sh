@@ -347,50 +347,6 @@ s_eval () {
         cons def $SAPPENDR
         SEVALR=$CONSR
         ;;
-      null)
-        cadr $1 && s_eval $CADRR $2
-        s_null $SEVALR && SEVALR=$SNULLR
-        ;;
-      append)
-        caddr $1 && s_eval $CADDRR $2
-        stackpush $SEVALR
-        cadr  $1 && s_eval $CADRR  $2
-        stackpop
-        s_append $SEVALR $STACKPOPR
-        SEVALR=$SAPPENDR
-        ;;
-      pair)
-        caddr $1 && s_eval $CADDRR $2
-        stackpush $SEVALR
-        cadr  $1 && s_eval $CADRR  $2
-        stackpop
-        s_pair $SEVALR $STACKPOPR
-        SEVALR=$SPAIRR
-        ;;
-      assq)
-        caddr $1 && s_eval $CADDRR $2
-        stackpush $SEVALR
-        cadr  $1 && s_eval $CADRR  $2
-        stackpop
-        s_assq $SEVALR $STACKPOPR
-        SEVALR=$SASSQR
-        ;;
-      or)
-        cadr $1 && s_eval $CADRR $2
-        if [ $SEVALR = t ]; then
-          SEVALR=t
-        else
-          caddr $1 && s_eval $CADDRR $2
-        fi
-        ;;
-      and)
-        cadr $1 && s_eval $CADRR $2
-        if [ $SEVALR = t ]; then
-          caddr $1 && s_eval $CADDRR $2
-        else
-          SEVALR=nil
-        fi
-        ;;
       *)
         car $1
         s_assq $CARR $2

@@ -1,6 +1,8 @@
+(def or '(lambda (a b) (cond (a t) (t b))))
+
 (def mkassoc
   '(lambda (a b)
-     (cond ((or (null a) (null b)) nil)
+     (cond ((or (eq a nil) (eq b nil)) nil)
            (t (cons (cons (car a) (car b))
                     (mkassoc (cdr a) (cdr b))))))) 
 

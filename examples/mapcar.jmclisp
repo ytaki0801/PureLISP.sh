@@ -1,6 +1,6 @@
 (def mapcar
   '(lambda (f x)
-     (cond ((null x) nil)
+     (cond ((eq x nil) nil)
            (t (cons (f (car x))
                     (mapcar f (cdr x)))))))
 

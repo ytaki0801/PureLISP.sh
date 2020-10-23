@@ -1,6 +1,6 @@
 (def filter
   '(lambda (f x)
-     (cond ((null x) nil)
+     (cond ((eq x nil) nil)
            ((f (car x))
             (cons (car x) (filter f (cdr x))))
            (t (filter f (cdr x))))))
