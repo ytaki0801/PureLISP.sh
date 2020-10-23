@@ -17,7 +17,7 @@ and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com
 [![pdksh](https://img.shields.io/badge/pdksh-v5.2.14_(not_supported)-red)](http://kornshell.org/)
 [![Bash](https://img.shields.io/badge/Bash-5.0.3-brightgreen)](https://www.gnu.org/software/bash/)
 [![yash](https://img.shields.io/badge/yash-2.48-brightgreen)](https://yash.osdn.jp/index.html.en)
-[![bosh%2fpbosh](https://img.shields.io/badge/bosh%2fpbosh_2020%2f04%2f27-brightgreen)](http://schilytools.sourceforge.net/bosh.html)
+[![bosh%2fpbosh](https://img.shields.io/badge/bosh%2fpbosh-2020%2f04%2f27-brightgreen)](http://schilytools.sourceforge.net/bosh.html)
 
 ## Purpose of this software
 
