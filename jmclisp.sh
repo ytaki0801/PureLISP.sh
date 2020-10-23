@@ -196,6 +196,11 @@ cadr () {
   car $CDRR
   CADRR=$CARR
 }
+cdar () {
+  car $1
+  cdr $CARR
+  CDARR=$CDRR
+}
 cadar () {
   car $1
   cdr $CARR
@@ -231,18 +236,12 @@ s_append () {
   fi
 }
 
-s_list () {
-  cons $2 nil
-  cons $1 $CONSR
-  SLISTR=$CONSR
-}
-
 s_pair () {
   s_null $1
   stackpush $SNULLR
   s_null $2
   stackpop
-  if [ $STACKPOPR = t -o $SNULLR = t ]; then
+  if [ $STACKPOPR = t -a $SNULLR = t ]; then
     SPAIRR=nil
   else
     atom $1
@@ -259,8 +258,8 @@ s_pair () {
       stackpush $CARR
       car $2
       stackpop
-      s_list $STACKPOPR $CARR
-      cons $SLISTR $SPAIRR
+      cons $STACKPOPR $CARR
+      cons $CONSR $SPAIRR
       SPAIRR=$CONSR
     else
       SPAIRR=nil
@@ -268,15 +267,20 @@ s_pair () {
   fi
 }
 
-s_assoc () {
-  caar $2
-  eq $CAARR $1
-  if [ $EQR = t ]; then
-    cadar $2
-    SASSOCR=$CADARR
+s_assq () {
+  s_null $2
+  if [ $SNULLR = t ]; then
+    SASSQ=nil
   else
-    cdr $2
-    s_assoc $1 $CDRR
+    caar $2
+    eq $CAARR $1
+    if [ $EQR = t ]; then
+      cdar $2
+      SASSQR=$CDARR
+    else
+      cdr $2
+      s_assq $1 $CDRR
+    fi
   fi
 }
 
@@ -291,7 +295,7 @@ s_eval () {
   else
   atom $1
   if [ $ATOMR = t ]; then
-    s_assoc $1 $2 && SEVALR=$SASSOCR
+    s_assq $1 $2 && SEVALR=$SASSQR
   else
   car $1 && atom $CARR
   if [ $ATOMR = t ]; then
@@ -355,29 +359,21 @@ s_eval () {
         s_append $SEVALR $STACKPOPR
         SEVALR=$SAPPENDR
         ;;
-      list)
-        caddr $1 && s_eval $CADDRR $2
-        stackpush $SEVALR
-        cadr  $1 && s_eval $CADRR  $2
-        stackpop
-        s_list $SEVALR $STACKPOPR
-        SEVALR=$SLISTR
-        ;;
       pair)
         caddr $1 && s_eval $CADDRR $2
         stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        stackpopr
+        stackpop
         s_pair $SEVALR $STACKPOPR
         SEVALR=$SPAIRR
         ;;
-      assocl)
+      assq)
         caddr $1 && s_eval $CADDRR $2
         stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
         stackpop
-        s_assoc $SEVALR $STACKPOPR
-        SEVALR=$SASSOCR
+        s_assq $SEVALR $STACKPOPR
+        SEVALR=$SASSQR
         ;;
       or)
         cadr $1 && s_eval $CADRR $2
@@ -397,9 +393,9 @@ s_eval () {
         ;;
       *)
         car $1
-        s_assoc $CARR $2
+        s_assq $CARR $2
         cdr $1
-        cons $SASSOCR $CDRR
+        cons $SASSQR $CDRR
         s_eval $CONSR $2
         ;;
     esac
