@@ -9,6 +9,8 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 #
 
+ECHO_STYLE=BSD
+
 
 # Basic functions for conscell operations:
 # cons, car, cdr, atom, eq
@@ -85,11 +87,6 @@ s_display () {
 
 # S-expression lexical analysis: s_lex
 
-IFS=''
-
-LF="
-"
-
 replace_all_posix() {
   set -- "$1" "$2" "$3" "$4" ""
   until [ _"$2" = _"${2#*"$3"}" ] && eval "$1=\$5\$2"; do
@@ -97,12 +94,17 @@ replace_all_posix() {
   done
 }
 
+LF="
+"
+
 s_lex0 () {
   replace_all_posix sl0INI " $1 " "$LF" ""
   replace_all_posix sl0LPS "$sl0INI" "(" " ( "
   replace_all_posix sl0RPS "$sl0LPS" ")" " ) "
   replace_all_posix sl0RET "$sl0RPS" "'" " ' "
 }
+
+IFS=''
 
 s_lex1 () {
   sl1HEAD=${1%% *}
