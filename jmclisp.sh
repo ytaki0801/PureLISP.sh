@@ -9,6 +9,10 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 #
 
+IFS=''
+LF="
+"
+
 
 # Basic functions for conscell operations:
 # cons, car, cdr, atom, eq
@@ -92,17 +96,12 @@ replace_all_posix() {
   done
 }
 
-LF="
-"
-
 s_lex0 () {
   replace_all_posix sl0INI " $1 " "$LF" ""
   replace_all_posix sl0LPS "$sl0INI" "(" " ( "
   replace_all_posix sl0RPS "$sl0LPS" ")" " ) "
   replace_all_posix sl0RET "$sl0RPS" "'" " ' "
 }
-
-IFS=''
 
 s_lex1 () {
   sl1HEAD=${1%% *}
@@ -239,20 +238,28 @@ s_list () {
 }
 
 s_pair () {
-  s_null $1 && spanr=$SNULLR
+  s_null $1
+  stackpush $SNULLR
   s_null $2
-  if [ $spanr = t -a $SNULLR = t ]; then
+  stackpop
+  if [ $STACKPOPR = t -o $SNULLR = t ]; then
     SPAIRR=nil
   else
-    atom $1 && spaatr=$ATOMR
+    atom $1
+    stackpush $ATOMR
     atom $2
-    if [ $spaatr = nil -a $ATOMR = nil ]; then
-      cdr $1 && spadr=$CDRR
+    stackpop
+    if [ $STACKPOPR = nil -o $ATOMR = nil ]; then
+      cdr $1
+      stackpush $CDRR
       cdr $2
-      s_pair $spadr $CDRR
-      car $1 && spaar=$CARR
+      stackpop
+      s_pair $STACKPOPR $CDRR
+      car $1
+      stackpush $CARR
       car $2
-      s_list $spaar $CARR
+      stackpop
+      s_list $STACKPOPR $CARR
       cons $SLISTR $SPAIRR
       SPAIRR=$CONSR
     else
@@ -444,7 +451,7 @@ evlis () {
 s_replread () {
   SREPLREADR=""
   read srplrd
-  while [ ! $srplrd = "\n" ]; do
+  while [ ! $srplrd = $LF ]; do
     SREPLREADR=$SREPLREADR$srplrd
     read srplrd
   done
@@ -471,7 +478,7 @@ s_repl () {
         SEVALR=$CARR
       fi
     fi
-    s_display $SEVALR && printf "\n"
+    s_display $SEVALR && printf $LF
     s_repl
   fi
 }

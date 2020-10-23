@@ -1,0 +1,23 @@
+(def filter
+  '(lambda (f x)
+     (cond ((null x) nil)
+           ((f (car x))
+            (cons (car x) (filter f (cdr x))))
+           (t (filter f (cdr x))))))
+
+(def vs
+  '((o . 1) (i . 2) (o . 3) (a . 4) (z . 5) (o . 6)))
+
+(cons '= (cons vs nil))
+
+(def ch '(lambda (x) (eq (car x) 'o)) vs)
+
+(cons '= (cons ch nil))
+
+(def r (filter ch vs))
+
+(cons '= (cons '(filter ch vs)
+(cons '= (cons r nil))))
+
+exit
+

@@ -1,0 +1,22 @@
+(def mapcar
+  '(lambda (f x)
+     (cond ((null x) nil)
+           (t (cons (f (car x))
+                    (mapcar f (cdr x)))))))
+
+(def vs '((hoge . 10) (hage . 20) (hige . 30)))
+
+(cons '= (cons vs) nil)
+
+(def r1 (mapcar 'car vs))
+
+(cons '= (cons '(mapcar 'car vs)
+(cons '= (cons r1 nil))) nil)
+
+(def r2 (mapcar 'cdr vs))
+
+(cons '= (cons '(mapcar 'cdr vs)
+(cons '= (cons r2 nil))) nil)
+
+exit
+

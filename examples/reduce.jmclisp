@@ -1,0 +1,34 @@
+(def reduce
+  '(lambda (f L i)
+     (cond ((null L) i)
+           (t (f (car L) (reduce f (cdr L) i))))))
+
+(def list1 '(a b c))
+
+(cons '= (cons list1 nil))
+
+(def list2 '(d e f g))
+
+(cons '= (cons list2 nil))
+
+(def r1 (reduce 'cons list1 list2))
+
+(cons '= (cons '(reduce 'cons list1 list2))
+(cons '= (cons r1 nil)))
+
+(def rappend '(lambda (x y) (reduce 'cons x y)))
+
+(cons '= (cons rappend nil))
+
+(def list3 '((a b) (c d e) (f) (g h i)))
+
+(cons '= (cons list3 nil))
+
+(def r2 (reduce 'rappend list3 nil))
+
+(cons '= (cons '(reduce 'rappend list3 nil)
+(cons '= (cons r2 nil))))
+
+exit
+
+
