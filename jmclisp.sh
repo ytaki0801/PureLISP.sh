@@ -9,8 +9,6 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 #
 
-ECHO_STYLE=BSD
-
 
 # Basic functions for conscell operations:
 # cons, car, cdr, atom, eq
@@ -57,13 +55,13 @@ s_strcons () {
   cdr $1
   eq $CDRR nil
   if [ $EQR = t ]; then
-    echo -n
+    printf ''
   else
     atom $CDRR
     if [ $ATOMR = t ]; then
-      echo -n " . "$CDRR
+      printf ' . %s' "$CDRR"
     else
-      echo -n " " && s_strcons $CDRR
+      printf " " && s_strcons $CDRR
     fi
   fi
 }
@@ -71,15 +69,15 @@ s_strcons () {
 s_display () {
   eq $1 nil
   if [ $EQR = t ]; then
-    echo -n "()"
+    printf "()"
   else
     atom $1
     if [ $ATOMR = t ]; then
-      echo -n $1
+      printf "$1"
     else
-      echo -n "("
+      printf "("
       s_strcons $1
-      echo -n ")"
+      printf ")"
     fi
   fi
 }
@@ -454,7 +452,7 @@ s_replread () {
 
 s_repl () {
   if [ ! $PROMPT = nil ]; then
-    echo -n "S> "
+    printf "S> "
   fi
   s_replread
   if [ ! $SREPLREADR = exit ]; then
@@ -473,7 +471,7 @@ s_repl () {
         SEVALR=$CARR
       fi
     fi
-    s_display $SEVALR && echo
+    s_display $SEVALR && printf "\n"
     s_repl
   fi
 }
