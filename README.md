@@ -13,6 +13,7 @@ and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com
 [![dash](https://img.shields.io/badge/dash-0.5.10.2-brightgreen)](http://gondor.apana.org.au/~herbert/dash/)
 [![yash](https://img.shields.io/badge/yash-2.48-brightgreen)](https://yash.osdn.jp/index.html.en)
 [![ksh93](https://img.shields.io/badge/ksh93-93u+-brightgreen)](http://kornshell.org/)
+[![pdksh](https://img.shields.io/badge/pdksh-v5.2.14(not_supported)-red)](http://kornshell.org/)
 
 ## Purpose of this software
 
