@@ -96,6 +96,8 @@ hage
 
 * More suitable error checks
 
+* More suitable S-expression input for REPL and lisp script execution
+
 ## License
 
 The codes in this repository are licensed under [CC0, Creative Commons Zero v1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
