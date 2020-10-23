@@ -8,6 +8,12 @@ This software is a Pure LISP interpreter written in shell script conformed to PO
 inspired from [John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
 and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html).
 
+## Purpose of this software
+
+* To use in education and research of basic LISP language processing easily
+
+* To use in ALL computer environments by running on a POSIX-conformant shell
+
 [![BusyBox_ash](https://img.shields.io/badge/BusyBox_ash-1.33.0-brightgreen)](https://www.busybox.net/)
 [![NetBSD_sh](https://img.shields.io/badge/NetBSD_sh-20181212-brightgreen)](http://cvsweb.netbsd.org/bsdweb.cgi/src/bin/sh/)
 [![dash](https://img.shields.io/badge/dash-0.5.10.2-brightgreen)](http://gondor.apana.org.au/~herbert/dash/)
@@ -18,12 +24,6 @@ and ported from [Paul Graham's Common Lisp implementation](http://paulgraham.com
 [![Bash](https://img.shields.io/badge/Bash-5.0.3-brightgreen)](https://www.gnu.org/software/bash/)
 [![yash](https://img.shields.io/badge/yash-2.48-brightgreen)](https://yash.osdn.jp/index.html.en)
 [![bosh%2fpbosh](https://img.shields.io/badge/bosh%2fpbosh-2020%2f04%2f27-brightgreen)](http://schilytools.sourceforge.net/bosh.html)
-
-## Purpose of this software
-
-* To use in education and research of basic LISP language processing easily
-
-* To use in ALL computer environments by running on a POSIX-conformant shell
 
 ## How to use
 
