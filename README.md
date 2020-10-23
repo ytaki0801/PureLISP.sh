@@ -21,32 +21,6 @@ Run the script to use REPL, like the following on [busybox-w32](https://frippery
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh jmclisp.sh
-S> (def mapcar
-     '(lambda (f x)
-        (cond ((null x) nil)
-              (t (cons (f (car x))
-                       (mapcar f (cdr x)))))))
-
-mapcar
-S> (mapcar 'car '((hoge . 10) (hage . 20) (hige . 30)))
-
-(hoge hage hige)
-S> (mapcar 'cdr '((hoge . 10) (hage . 20) (hige . 30)))
-
-(10 20 30)
-S> (def filter
-     '(lambda (f x)
-        (cond ((null x) nil)
-              ((f (car x))
-               (cons (car x) (filter f (cdr x))))
-              (t (filter f (cdr x))))))
-
-filter
-S> (filter
-     '(lambda (x) (eq (car x) 'o))
-     '((o . 1) (i . 2) (o . 3) (a . 4) (z . 5) (o . 6)))
-
-((o . 1) (o . 3) (o . 6))
 S> (def reduce
      '(lambda (f L i)
         (cond ((null L) i)
@@ -72,7 +46,7 @@ Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option, promp
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox sh
-~/busybox $ cat sample-assoc.jmclisp
+~/busybox $ cat assoc.jmclisp
 (def mkassoc
   '(lambda (a b)
      (cond ((or (null a) (null b)) nil)
@@ -96,7 +70,7 @@ C:\Users\TAKIZAWA Yozo\busybox>busybox sh
 
 exit
 
-~/busybox $ ./jmclisp.sh -s < sample-assoc.jmclisp
+~/busybox $ ./jmclisp.sh -s < assoc.jmclisp
 mkassoc
 vs
 assoc
@@ -114,7 +88,7 @@ hage
 
 * Special form `def` to bind variables in global environment with quoted values, including lambda expressions
 
-* S-expression input and output functions
+* Simple S-expression input and output functions
 
 * Simple REPL with `exit` command and `-s` prompt suppression mode
 
