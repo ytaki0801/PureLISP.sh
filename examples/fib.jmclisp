@@ -1,0 +1,14 @@
+(def reduce
+  '(lambda (f L i)
+     (cond ((eq L nil) i)
+           (t (f (car L) (reduce f (cdr L) i))))))
+
+(def rappend '(lambda (x y) (reduce 'cons x y)))
+
+(def fib
+  '(lambda (n f1 f2)
+     (cond ((eq n nil) f1)
+           (t (fib (cdr n) f2 (rappend f1 f2))))))
+
+exit
+

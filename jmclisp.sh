@@ -284,6 +284,15 @@ s_assq () {
   fi
 }
 
+s_length () {
+  s_null $1
+  if [ $SNULLR = nil ]; then
+    SLENGTHR=$((SLENGTHR+1))
+    cdr $1
+    s_length $CDRR
+  fi
+}
+
 s_eval () {
   eq $1 t
   if [ $EQR = t ]; then
@@ -346,6 +355,13 @@ s_eval () {
         s_append $SPAIRR $2
         cons def $SAPPENDR
         SEVALR=$CONSR
+        ;;
+      length)
+        cadr $1
+        s_eval $CADRR
+        SLENGTHR=0
+        s_length $SEVALR
+        SEVALR=$SLENGTHR
         ;;
       *)
         car $1
