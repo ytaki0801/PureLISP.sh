@@ -107,7 +107,7 @@ hage
 
 * More suitable error checks
 
-* More suitable S-expression input for REPL and lisp script execution
+* Introducing lexically scoped variables in lambda expression
 
 ## License
 
