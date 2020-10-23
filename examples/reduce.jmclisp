@@ -13,8 +13,8 @@
 
 (def r1 (reduce 'cons list1 list2))
 
-(cons '= (cons '(reduce 'cons list1 list2))
-(cons '= (cons r1 nil)))
+(cons '= (cons '(reduce 'cons list1 list2)
+(cons '= (cons r1 nil))))
 
 (def rappend '(lambda (x y) (reduce 'cons x y)))
 
