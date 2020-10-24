@@ -34,7 +34,7 @@ Run the script to use REPL, like the following on [busybox-w32](https://frippery
 C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh jmclisp.sh
 S> (def reduce
      '(lambda (f L i)
-        (cond ((null L) i)
+        (cond ((eq L nil) i)
               (t (f (car L) (reduce f (cdr L) i))))))
 
 reduce
@@ -56,67 +56,59 @@ C:\Users\TAKIZAWA Yozo\busybox>
 Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option, prompt suppression mode, via redirection in a shell interpreter.
 
 ```
-C:\Users\TAKIZAWA Yozo\busybox>busybox sh
-~/busybox $ cat examples/assoc.jmclisp
-(def or '(lambda (a b) (cond (a t) (t b))))
-
-(def mkassoc
+C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh
+~/busybox $ cat examples/fibonacci.jmclisp
+(def append
   '(lambda (a b)
-     (cond ((or (eq a nil) (eq b nil)) nil)
-           (t (cons (cons (car a) (car b))
-                    (mkassoc (cdr a) (cdr b))))))) 
+     (cond ((eq a nil) b)
+           (t (append (cdr a)
+              (cons (car a) b))))))
 
-(def k '(Apple Orange Lemmon))
+(def fib
+  '(lambda (n)
+     (cond ((eq n '()) '())
+           ((eq (cdr n) '()) '(0))
+           (t (append (fib (cdr n))
+                      (fib (cdr (cdr n))))))))
 
-(cons '= (cons k nil))
+(def ten '(0 0 0 0 0 0 0 0 0 0))
 
-(def v '(120 210 180))
+(cons '(fib ten) (cons '= (cons (length (fib ten)) nil)))
 
-(cons '= (cons v nil))
+(def fib2
+  '(lambda (n f1 f2)
+     (cond ((eq n '()) f1)
+           (t (fib2 (cdr n) f2 (append f1 f2))))))
 
-(def vs (mkassoc k v))
+(def zero '())
 
-(cons '= (cons '(mkassoc k v) (cons '= (cons vs 'nil))))
+(def one '(0))
 
-(def assoc
-  '(lambda (k vs)
-     (cond ((eq vs '()) nil)
-           ((eq (car (car vs)) k)
-            (car vs))
-           (t (assoc k (cdr vs))))))
-
-(cons '(assoc 'Orange vs)
-(cons '= (cons (assoc 'Orange vs) nil)))
-
-(cons '(car (assoc 'Orange vs))
-(cons '= (cons (car (assoc 'Orange vs)) nil)))
-
-(cons '(cdr (assoc 'Orange vs))
-(cons '= (cons (cdr (assoc 'Orange vs)) nil)))
+(cons '(fib2 ten zero one) (cons '= (cons (length (fib2 ten zero one)))))
 
 exit
 
-~/busybox $ ./jmclisp.sh -s < examples/assoc.jmclisp
-or
-mkassoc
-k
-(= (Apple Orange Lemmon))
-v
-(= (120 210 180))
-vs
-(= (mkassoc k v) = ((Apple . 120) (Orange . 210) (Lemmon . 180)))
-assoc
-((assoc (quote Orange) vs) = (Orange . 210))
-((car (assoc (quote Orange) vs)) = Orange)
-((cdr (assoc (quote Orange) vs)) = 210)
-~/busybox $ 
+~/busybox $ sh jmclisp.sh -s < examples/fibonacci.jmclisp
+append
+fib
+ten
+((fib ten) = 55)
+fib2
+zero
+one
+((fib2 ten zero one) = 55)
+~/busybox $ exit
+
+C:\Users\TAKIZAWA Yozo\busybox>
 ```
 
 ## LISP Specification in this software
 
 * Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq`
 
-* Special forms: `quote`, `cond`, `lambda` (the arguments are dynamically scoped)
+* Original built-in functions: `length`
+
+* Special forms: `quote`, `cond`, `lambda` (dynamically scoped)
 
 * Special form `def` to bind variables in global environment with quoted values, including lambda expressions
 
