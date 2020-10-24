@@ -201,6 +201,11 @@ cdar () {
   cdr $CARR
   CDARR=$CDRR
 }
+cddr () {
+  cdr $1
+  cdr $CDRR
+  CDDRR=$CDRR
+}
 cadar () {
   car $1
   cdr $CARR
@@ -213,12 +218,25 @@ caddr () {
   car $CDRR
   CADDRR=$CARR
 }
+cdddr () {
+  cdr $1
+  cdr $CDRR
+  cdr $CDRR
+  CDDDRR=$CDRR
+}
 caddar () {
   car $1
   cdr $CARR
   cdr $CDRR
   car $CDRR
   CADDARR=$CARR
+}
+cadddr () {
+  cdr $1
+  cdr $CDRR
+  cdr $CDRR
+  car $CDRR
+  CADDDRR=$CARR
 }
 
 s_null () { eq $1 nil && SNULLR=$EQR; }
@@ -293,6 +311,17 @@ s_length () {
   fi
 }
 
+s_builtin () {
+  case $1 in
+    quote|atom|eq|car|cdr|cons|cond|def|length)
+      SBUILTINR=t
+      ;;
+    *)
+      SBUILTINR=nil
+      ;;
+  esac
+}
+
 s_eval () {
   eq $1 t
   if [ $EQR = t ]; then
@@ -363,6 +392,20 @@ s_eval () {
         s_length $SEVALR
         SEVALR=$SLENGTHR
         ;;
+      closure)
+        cadr $1            # local env
+        s_append $CADRR $2 # add local env to global env $2
+        cdddr $1           # function values
+        caddr $1           # function variable or built-in function name
+        s_builtin $CADDRR
+        if [ $SBUILTINR = t ]; then
+          cons $CADDRR $CDDDRR
+        else
+          s_assq $CADDRR $SAPPENDR
+          cons $SASSQR $CDDDRR
+        fi
+        s_eval $CONSR $SAPPENDR
+        ;;
       *)
         car $1
         s_assq $CARR $2
@@ -379,9 +422,13 @@ s_eval () {
       evlis $CDRR $2
       cadar $1
       s_pair $CADARR $EVLISR
-      s_append $SPAIRR $2
+      cons $SPAIRR nil
+      stackpush $CONSR
       caddar $1
-      s_eval $CADDARR $SAPPENDR
+      stackpop
+      s_append $STACKPOPR $CADDARR
+      cons closure $SAPPENDR
+      s_eval $CONSR $2
     else
       SEVALR=nil
     fi
