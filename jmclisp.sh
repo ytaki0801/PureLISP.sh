@@ -358,7 +358,7 @@ s_eval () {
         ;;
       length)
         cadr $1
-        s_eval $CADRR
+        s_eval $CADRR $2
         SLENGTHR=0
         s_length $SEVALR
         SEVALR=$SLENGTHR
@@ -406,9 +406,11 @@ evlis () {
   if [ $SNULLR = "t" ]; then
     EVLISR=nil
   else
-    cdr $1 && evlis  $CDRR $2
     car $1 && s_eval $CARR $2
-    cons $SEVALR $EVLISR
+    stackpush $SEVALR
+    cdr $1 && evlis  $CDRR $2
+    stackpop
+    cons $STACKPOPR $EVLISR
     EVLISR=$CONSR
   fi
 }
