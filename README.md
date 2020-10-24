@@ -11,7 +11,6 @@ and [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.ht
 ## Purpose of this software
 
 * To use in education and research of basic LISP language processing easily
-
 * To use in ALL computer environments by running on a POSIX-conformant shell
 
 [![BusyBox_ash](https://img.shields.io/badge/BusyBox_ash-1.33.0-brightgreen)](https://www.busybox.net/)
@@ -53,7 +52,8 @@ S> exit
 C:\Users\TAKIZAWA Yozo\busybox>
 ```
 
-Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option, prompt suppression mode, via redirection in a shell interpreter.
+Or, you can send a text file of LISP codes to jmclisp.sh with "-s" option,
+prompt suppression mode, via redirection in a shell interpreter.
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh
@@ -104,22 +104,15 @@ C:\Users\TAKIZAWA Yozo\busybox>
 
 ## LISP Specification in this software
 
-* Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq`
-
-* Original built-in functions: `length`
-
-* Special forms: `quote`, `cond`, `lambda` (dynamically scoped)
-
-* Special form `def` to bind variables in global environment with quoted values, including lambda expressions
-
+* Built-in functions: `cons`, `car`, `cdr`, `atom`, `eq` and `length`
+* Special forms: `quote`, `cond` and `lambda` (dynamically scoped)
+* Special form `def` to bind variables in global environment with quoted values
 * Simple S-expression input and output functions
-
 * Simple REPL with `exit` command and `-s` prompt suppression mode
 
 ## Bugs and TODO
 
 * More suitable error checks
-
 * Introducing lexically scoped variables in lambda expressions
 
 ## License
