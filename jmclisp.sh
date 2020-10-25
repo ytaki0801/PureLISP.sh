@@ -212,6 +212,12 @@ cadar () {
   car $CDRR
   CADARR=$CARR
 }
+cddar () {
+  car $1
+  cdr $CARR
+  cdr $CDRR
+  CDDARR=$CDRR
+}
 caddr () {
   cdr $1
   cdr $CDRR
@@ -237,6 +243,20 @@ cadddr () {
   cdr $CDRR
   car $CDRR
   CADDDRR=$CARR
+}
+caaddr () {
+  cdr $1
+  cdr $CDRR
+  car $CDRR
+  car $CARR
+  CAADDRR=$CARR
+}
+cdddar () {
+  car $1
+  cdr $CARR
+  cdr $CDRR
+  cdr $CDRR
+  CDDDARR=$CDRR
 }
 
 s_null () { eq $1 nil && SNULLR=$EQR; }
@@ -311,17 +331,6 @@ s_length () {
   fi
 }
 
-s_builtin () {
-  case $1 in
-    quote|atom|eq|car|cdr|cons|cond|def|length)
-      SBUILTINR=t
-      ;;
-    *)
-      SBUILTINR=nil
-      ;;
-  esac
-}
-
 s_eval () {
   eq $1 t
   if [ $EQR = t ]; then
@@ -374,16 +383,29 @@ s_eval () {
         cdr $1 && evcon $CDRR $2
         SEVALR=$EVCONR
         ;;
+      lambda)
+        cons $2 nil
+        cons $1 $CONSR
+        cons closure $CONSR
+        SEVALR=$CONSR
+        ;;
+      closure)
+        cadr $1
+        caddr $CADRR
+        s_eval $CADDRR $2
+        ;;
       def)
         caddr $1
         s_eval $CADDRR $2 && cons $SEVALR nil
         stackpush $CONSR
         cadr $1 && cons $CADRR nil
         stackpop
+        stackpush $CADRR
         s_pair $CONSR $STACKPOPR
-        s_append $SPAIRR $2
-        cons def $SAPPENDR
-        SEVALR=$CONSR
+        s_append $SPAIRR $ENV
+        ENV=$SAPPENDR
+        stackpop
+        SEVALR=$STACKPOPR
         ;;
       length)
         cadr $1
@@ -391,20 +413,6 @@ s_eval () {
         SLENGTHR=0
         s_length $SEVALR
         SEVALR=$SLENGTHR
-        ;;
-      closure)
-        cadr $1            # local env
-        s_append $CADRR $2 # add local env to global env $2
-        cdddr $1           # function values
-        caddr $1           # function variable or built-in function name
-        s_builtin $CADDRR
-        if [ $SBUILTINR = t ]; then
-          cons $CADDRR $CDDDRR
-        else
-          s_assq $CADDRR $SAPPENDR
-          cons $SASSQR $CDDDRR
-        fi
-        s_eval $CONSR $SAPPENDR
         ;;
       *)
         car $1
@@ -416,21 +424,37 @@ s_eval () {
     esac
   else
     caar $1
-    eq $CAARR lambda
-    if [ $EQR = t ]; then
-      cdr $1
-      evlis $CDRR $2
-      cadar $1
-      s_pair $CADARR $EVLISR
-      cons $SPAIRR nil
-      stackpush $CONSR
-      caddar $1
-      stackpop
-      s_append $STACKPOPR $CADDARR
-      cons closure $SAPPENDR
-      s_eval $CONSR $2
+    atom $CAARR
+    if [ $ATOMR = t ]; then
+      case $CAARR in
+        lambda)
+          car $1
+          s_eval $CARR $2
+          cdr $1
+          stackpush $SEVALR
+          evlis $CDRR $2
+          cadar $1
+          s_pair $CADARR $EVLISR
+          stackpop
+          caddr $STACKPOPR
+          s_append $SPAIRR $CADDRR
+          s_eval $STACKPOPR $SAPPENDR
+          ;;
+        *)
+          SEVALR=nil
+          ;;
+      esac
     else
-      SEVALR=nil
+      caar $1
+      s_eval $CAARR $2
+      cadr $SEVALR
+      stackpush $SEVALR
+      caddr $CADRR
+      cdr $1
+      cons $CADDRR $CDRR
+      stackpop
+      caddr $STACKPOPR
+      s_eval $CONSR $CADDRR
     fi
   fi
   fi
@@ -484,17 +508,6 @@ s_repl () {
     SYNPOS=$((TNUM-1))
     s_syn
     s_eval $SSYNR $ENV
-    atom $SEVALR
-    if [ $ATOMR = nil ]; then
-      car $SEVALR && eq $CARR def
-      if [ $EQR = t ]; then
-        cdr $SEVALR
-        s_append $CDRR $ENV
-        ENV=$SAPPENDR
-        cdr $SEVALR && car $CDRR && car $CARR
-        SEVALR=$CARR
-      fi
-    fi
     s_display $SEVALR && printf $LF
     s_repl
   fi
