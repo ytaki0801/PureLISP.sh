@@ -16,12 +16,10 @@ and [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.ht
 [![BusyBox_ash](https://img.shields.io/badge/BusyBox_ash-1.33.0-brightgreen)](https://www.busybox.net/)
 [![NetBSD_sh](https://img.shields.io/badge/NetBSD_sh-20181212-brightgreen)](http://cvsweb.netbsd.org/bsdweb.cgi/src/bin/sh/)
 [![dash](https://img.shields.io/badge/dash-0.5.10.2-brightgreen)](http://gondor.apana.org.au/~herbert/dash/)
-
 [![NetBSD_ksh_(pdksh)](https://img.shields.io/badge/NetBSD_ksh_(pdksh)-v5.2.14_(not_supported)-red)](http://cvsweb.netbsd.org/bsdweb.cgi/src/bin/ksh/)
 [![ksh93](https://img.shields.io/badge/ksh93-93u+-brightgreen)](http://kornshell.org/)
 [![mksh](https://img.shields.io/badge/mksh-R59b-brightgreen)](http://www.mirbsd.org/mksh.htm)
 [![oksh](https://img.shields.io/badge/oksh-6.7-brightgreen)](https://github.com/ibara/oksh)
-
 [![Bash](https://img.shields.io/badge/Bash-5.0.3-brightgreen)](https://www.gnu.org/software/bash/)
 [![yash](https://img.shields.io/badge/yash-2.48-brightgreen)](https://yash.osdn.jp/index.html.en)
 [![bosh%2fpbosh](https://img.shields.io/badge/bosh%2fpbosh-2020%2f04%2f27-brightgreen)](http://schilytools.sourceforge.net/bosh.html)
@@ -112,6 +110,12 @@ C:\Users\TAKIZAWA Yozo\busybox>
 * Special form `def` to bind variables in global environment with quoted values
 * Simple S-expression input and output functions
 * Simple REPL with `exit` command and `-s` prompt suppression mode
+
+## Shell Programming in this software
+
+* Conscells are firstly implemented to program as a metacircular evaluator
+* Pseudo-Array and Stack implementation by using gloval variables
+* Using pattern-matching to do S-expression lexical especially
 
 ## Bugs and TODO
 
