@@ -5,8 +5,11 @@
 Hash tag on SNS: [`#jmclisp_sh`](https://twitter.com/hashtag/jmclisp_sh)
 
 This software is a Pure LISP interpreter written in shell script conformed to POSIX shell,
-inspired from [John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/recursive/recursive.html)
-and [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html).
+inspired from
+[John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/recursive/recursive.html),
+[Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html),
+[MIT's Structure and Interpretation of Computer Programs](https://mitpress.mit.edu/sites/default/files/sicp/index.html)
+and [Peter Norvig's Lispy](https://norvig.com/lispy.html)
 
 ## Purpose of this software
 
