@@ -118,7 +118,7 @@ C:\Users\TAKIZAWA Yozo\busybox>
 
 * Conscells are firstly implemented to program as a metacircular evaluator
 * Pseudo-Array and Stack implementation by using gloval variables
-* Using pattern-matching to do S-expression lexical especially
+* Using pattern-matching to do S-expression lexical analysis especially
 
 ## Bugs and TODO
 
