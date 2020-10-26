@@ -52,7 +52,7 @@ FIB2="(def fib2
      (cond ((eq n '()) f1)
            (t (fib2 (cdr n) f2 (append f1 f2))))))
 
-(cons '(fib2 num zero one) (cons '= (cons (length (fib2 num zero one)))))
+(cons '(fib2 num zero one) (cons '= (cons (length (fib2 num zero one)) nil)))
 
 exit
 

@@ -6,7 +6,7 @@
 
 (def vs '((hoge . 10) (hage . 20) (hige . 30)))
 
-(cons '= (cons vs) nil)
+(cons '= (cons vs nil))
 
 (def r1 (mapcar 'car vs))
 

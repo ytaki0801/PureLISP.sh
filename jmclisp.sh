@@ -279,7 +279,7 @@ s_pair () {
   stackpush $SNULLR
   s_null $2
   stackpop
-  if [ $STACKPOPR = t -a $SNULLR = t ]; then
+  if [ $STACKPOPR = t -o $SNULLR = t ]; then
     SPAIRR=nil
   else
     atom $1
@@ -342,7 +342,8 @@ s_eval () {
   else
   atom $1
   if [ $ATOMR = t ]; then
-    s_assq $1 $2 && SEVALR=$SASSQR
+    s_assq $1 $2
+    SEVALR=$SASSQR
   else
   car $1 && atom $CARR
   if [ $ATOMR = t ]; then
@@ -359,8 +360,8 @@ s_eval () {
         caddr $1 && s_eval $CADDRR $2
         stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        stackpop
-        eq $SEVALR $STACKPOPR
+        stackpop && SEVALR_EQ2=$STACKPOPR
+        eq $SEVALR $SEVALR_EQ2
         SEVALR=$EQR
         ;;
       car)
@@ -375,24 +376,23 @@ s_eval () {
         caddr $1 && s_eval $CADDRR $2
         stackpush $SEVALR
         cadr  $1 && s_eval $CADRR  $2
-        stackpop
-        cons $SEVALR $STACKPOPR
+        stackpop && SEVALR_CONS2=$STACKPOPR
+        cons $SEVALR $SEVALR_CONS2
         SEVALR=$CONSR
         ;;
       cond)
-        cdr $1 && evcon $CDRR $2
+        cdr $1
+        evcon $CDRR $2
         SEVALR=$EVCONR
         ;;
       lambda)
         cons $2 nil
-        cons $1 $CONSR
-        cons closure $CONSR
-        SEVALR=$CONSR
-        ;;
-      closure)
+        caddr $1
+        cons $CADDRR $CONSR
         cadr $1
-        caddr $CADRR
-        s_eval $CADDRR $2
+        cons $CADRR $CONSR
+        cons lambda $CONSR
+        SEVALR=$CONSR
         ;;
       def)
         caddr $1
@@ -423,39 +423,24 @@ s_eval () {
         ;;
     esac
   else
-    caar $1
-    atom $CAARR
-    if [ $ATOMR = t ]; then
-      case $CAARR in
-        lambda)
-          car $1
-          s_eval $CARR $2
-          cdr $1
-          stackpush $SEVALR
-          evlis $CDRR $2
-          cadar $1
-          s_pair $CADARR $EVLISR
-          stackpop
-          caddr $STACKPOPR
-          s_append $SPAIRR $CADDRR
-          s_eval $STACKPOPR $SAPPENDR
-          ;;
-        *)
-          SEVALR=nil
-          ;;
-      esac
-    else
-      caar $1
-      s_eval $CAARR $2
-      cadr $SEVALR
-      stackpush $SEVALR
-      caddr $CADRR
-      cdr $1
-      cons $CADDRR $CDRR
-      stackpop
-      caddr $STACKPOPR
-      s_eval $CONSR $CADDRR
-    fi
+    car $1
+    s_eval $CARR $2 # f
+
+    stackpush $SEVALR
+    cdr $1
+    evlis $CDRR $2 # args
+    stackpop && SEVALR=$STACKPOPR
+
+    cadr   $SEVALR # lvars
+    caddr  $SEVALR # lbody
+    cadddr $SEVALR # lenvs
+
+    stackpush $CADDRR
+    s_pair $CADRR $EVLISR
+    s_append $SPAIRR $CADDDRR
+    stackpop && CADDRR=$STACKPOPR
+
+    s_eval $CADDRR $SAPPENDR
   fi
   fi
   fi
@@ -463,12 +448,18 @@ s_eval () {
 }
 
 evcon () {
-  caar $1 && s_eval $CAARR $2
+  caar $1
+  s_eval $CAARR $2
   if [ $SEVALR = t ]; then
-    cadar $1 && s_eval $CADARR $2
+    cadar $1
+    stackpush $CADARR
+    s_eval $CADARR $2
+    stackpop
+    CADARR=$STACKPOPR
     EVCONR=$SEVALR
   else
-    cdr $1 && evcon $CDRR $2
+    cdr $1
+    evcon $CDRR $2
   fi
 }
 

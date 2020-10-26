@@ -24,7 +24,7 @@
 
 (def one '(0))
 
-(cons '(fib2 ten zero one) (cons '= (cons (length (fib2 ten zero one)))))
+(cons '(fib2 ten zero one) (cons '= (cons (length (fib2 ten zero one)) nil)))
 
 exit
 
