@@ -263,7 +263,7 @@ s_null () { eq $1 nil && SNULLR=$EQR; }
 
 s_append () {
   s_null $1
-  if [ $SNULLR = "t" ]; then
+  if [ $SNULLR = t ]; then
     SAPPENDR=$2
   else
     cdr $1
@@ -345,6 +345,36 @@ s_lookup () {
   SLOOKUPR=$SASSQR
 }
 
+s_cond () {
+  caar $1
+  s_eval $CAARR $2
+  if [ $SEVALR = t ]; then
+    cadar $1
+    stackpush $CADARR
+    s_eval $CADARR $2
+    stackpop
+    CADARR=$STACKPOPR
+    SCONDR=$SEVALR
+  else
+    cdr $1
+    s_cond $CDRR $2
+  fi
+}
+
+s_eargs () {
+  s_null $1
+  if [ $SNULLR = t ]; then
+    SEARGSR=nil
+  else
+    car $1 && s_eval $CARR $2
+    stackpush $SEVALR
+    cdr $1 && s_eargs $CDRR $2
+    stackpop
+    cons $STACKPOPR $SEARGSR
+    SEARGSR=$CONSR
+  fi
+}
+
 s_eval () {
   eq $1 t
   if [ $EQR = t ]; then
@@ -396,8 +426,8 @@ s_eval () {
         ;;
       cond)
         cdr $1
-        evcon $CDRR $2
-        SEVALR=$EVCONR
+        s_cond $CDRR $2
+        SEVALR=$SCONDR
         ;;
       lambda) # make closure
         cons $2 nil
@@ -436,9 +466,10 @@ s_eval () {
         if [ $SNULLR = t ]; then
           SEVALR=nil
         else
+          cadddr $SLOOKUPR
           cdr $1
           cons $SLOOKUPR $CDRR
-          s_eval $CONSR $2
+          s_eval $CONSR $CADDDRR
         fi
         ;;
     esac
@@ -448,53 +479,34 @@ s_eval () {
 
     stackpush $SEVALR
     cdr $1
-    evlis $CDRR $2    # args
+    s_eargs $CDRR $2  # args
     stackpop && SEVALR=$STACKPOPR
 
     cadr   $SEVALR    # lvars
     caddr  $SEVALR    # lbody
     cadddr $SEVALR    # lenvs
 
+    atom $CADRR
+    if [ $ATOMR = t ]; then
+      s_null $CADRR
+      if [ $SNULLR = t ]; then
+        s_eval $CADDRR $ENV
+      else
+        SEVALR=$SEARGSR
+      fi
+      return
+    fi
+
     stackpush $CADDRR
-    s_pair $CADRR $EVLISR
-    #s_append $SPAIRR $CADDDRR
+    s_null $CADRR
+    s_pair $CADRR $SEARGSR
+    s_append $SPAIRR $CADDDRR
     stackpop && CADDRR=$STACKPOPR
 
-    #s_eval $CADDRR $SAPPENDR
-    s_eval $CADDRR $SPAIRR
+    s_eval $CADDRR $SAPPENDR
   fi
   fi
   fi
-  fi
-}
-
-evcon () {
-  caar $1
-  s_eval $CAARR $2
-  if [ $SEVALR = t ]; then
-    cadar $1
-    stackpush $CADARR
-    s_eval $CADARR $2
-    stackpop
-    CADARR=$STACKPOPR
-    EVCONR=$SEVALR
-  else
-    cdr $1
-    evcon $CDRR $2
-  fi
-}
-
-evlis () {
-  s_null $1
-  if [ $SNULLR = "t" ]; then
-    EVLISR=nil
-  else
-    car $1 && s_eval $CARR $2
-    stackpush $SEVALR
-    cdr $1 && evlis  $CDRR $2
-    stackpop
-    cons $STACKPOPR $EVLISR
-    EVLISR=$CONSR
   fi
 }
 

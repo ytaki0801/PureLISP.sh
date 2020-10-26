@@ -1,0 +1,36 @@
+(def x '10)
+
+(def func1 (lambda () (cons x x)))
+
+(func1)
+
+(def func2 (lambda (x) (func1)))
+
+(cons
+(func2 '20)
+(cons '(= must be (10 . 10) in lexical scope) nil))
+
+(((((lambda (x) (lambda (y) (lambda (z) (lambda (w)
+(cons (cons (cons (cons nil x) y) z) w)))))
+'1) '2) '3) '4)
+
+'(= must be ((((() . 1) . 2) . 3) . 4) for currying)
+
+(def mycons (lambda (x y) (lambda (f) (f x y))))
+
+(def mycar (lambda (f) (f (lambda (x y) x))))
+
+(def mycdr (lambda (f) (f (lambda (x y) y))))
+
+(def s (mycons 'hoge 'hage))
+
+(mycar s)
+
+'(= must be hoge by closure)
+
+(mycdr s)
+
+'(= must be hage by closure)
+
+exit
+
