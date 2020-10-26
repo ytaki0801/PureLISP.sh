@@ -424,16 +424,16 @@ s_eval () {
     esac
   else
     car $1
-    s_eval $CARR $2 # f
+    s_eval $CARR $2   # f
 
     stackpush $SEVALR
     cdr $1
-    evlis $CDRR $2 # args
+    evlis $CDRR $2    # args
     stackpop && SEVALR=$STACKPOPR
 
-    cadr   $SEVALR # lvars
-    caddr  $SEVALR # lbody
-    cadddr $SEVALR # lenvs
+    cadr   $SEVALR    # lvars
+    caddr  $SEVALR    # lbody
+    cadddr $SEVALR    # lenvs
 
     stackpush $CADDRR
     s_pair $CADRR $EVLISR
