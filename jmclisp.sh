@@ -352,8 +352,7 @@ s_cond () {
     cadar $1
     stackpush $CADARR
     s_eval $CADARR $2
-    stackpop
-    CADARR=$STACKPOPR
+    stackpop && CADARR=$STACKPOPR
     SCONDR=$SEVALR
   else
     cdr $1
@@ -376,16 +375,16 @@ s_eargs () {
 }
 
 s_eval () {
-  eq $1 t
+  eq $1 t    # pre-setting value
   if [ $EQR = t ]; then
     SEVALR=t
   else
-  eq $1 nil
+  eq $1 nil  # pre-setting value
   if [ $EQR = t ]; then
     SEVALR=nil
   else
   atom $1
-  if [ $ATOMR = t ]; then # user-defined variables
+  if [ $ATOMR = t ]; then  # user-defined vars by def
     s_lookup $1 $2
     SEVALR=$SLOOKUPR
   else
@@ -424,12 +423,43 @@ s_eval () {
         cons $SEVALR $SEVALR_CONS2
         SEVALR=$CONSR
         ;;
+      length)
+        cadr $1
+        s_eval $CADRR $2
+        SLENGTHR=0
+        s_length $SEVALR
+        SEVALR=$SLENGTHR
+        ;;
+      eval)
+        caddr $1
+        s_append $CADDRR $2
+        cadr $1
+        s_eval $CADRR $SAPPENDR
+        ;;
       cond)
         cdr $1
         s_cond $CDRR $2
         SEVALR=$SCONDR
         ;;
-      lambda) # make closure
+      if)
+        cadr $1
+        s_eval $CADRR $2
+        eq $SEVALR t
+        if [ $EQR = t ]; then
+          caddr $1
+          s_eval $CADDRR $2
+        else
+          cdddr $1
+          s_null $CDDDRR
+          if [ $SNULLR = t ]; then
+            SEVALR=nil
+          else
+            cadddr $1
+            s_eval $CADDDRR $2
+          fi
+        fi
+        ;;
+      lambda)  # making closure
         cons $2 nil
         caddr $1
         cons $CADDRR $CONSR
@@ -443,23 +473,17 @@ s_eval () {
         s_eval $CADDRR $2
         cons $SEVALR nil
         stackpush $CONSR
-        cadr $1 && cons $CADRR nil
-        stackpop
+        cadr $1
+        cons $CADRR nil
+        stackpop && DEFVALUE=$STACKPOPR
         stackpush $CADRR
-        s_pair $CONSR $STACKPOPR
+        s_pair $CONSR $DEFVALUE
         s_append $SPAIRR $ENV
         ENV=$SAPPENDR
-        stackpop
-        SEVALR=$STACKPOPR
+        stackpop && DEFNAME=$STACKPOPR
+        SEVALR=$DEFNAME
         ;;
-      length)
-        cadr $1
-        s_eval $CADRR $2
-        SLENGTHR=0
-        s_length $SEVALR
-        SEVALR=$SLENGTHR
-        ;;
-      *) # user-defined functions
+      *)  # user-defined funcs by def
         car $1
         s_lookup $CARR $2
         s_null $SLOOKUPR
@@ -469,11 +493,12 @@ s_eval () {
           cadddr $SLOOKUPR
           cdr $1
           cons $SLOOKUPR $CDRR
-          s_eval $CONSR $CADDDRR
+          #s_eval $CONSR $CADDDRR
+          s_eval $CONSR $2  # for dynamic-scope
         fi
         ;;
     esac
-  else
+  else    # lambda-expression itself at the first in a list
     car $1
     s_eval $CARR $2   # f
 

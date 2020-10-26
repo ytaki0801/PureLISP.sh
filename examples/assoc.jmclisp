@@ -1,7 +1,7 @@
-(def or '(lambda (a b) (cond (a t) (t b))))
+(def or (lambda (a b) (cond (a t) (t b))))
 
 (def mkassoc
-  '(lambda (a b)
+  (lambda (a b)
      (cond ((or (eq a nil) (eq b nil)) nil)
            (t (cons (cons (car a) (car b))
                     (mkassoc (cdr a) (cdr b))))))) 
@@ -19,7 +19,7 @@
 (cons '= (cons '(mkassoc k v) (cons '= (cons vs 'nil))))
 
 (def assoc
-  '(lambda (k vs)
+  (lambda (k vs)
      (cond ((eq vs '()) nil)
            ((eq (car (car vs)) k)
             (car vs))
