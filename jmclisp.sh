@@ -493,8 +493,8 @@ s_eval () {
           cadddr $SLOOKUPR
           cdr $1
           cons $SLOOKUPR $CDRR
-          #s_eval $CONSR $CADDDRR
-          s_eval $CONSR $2  # for dynamic-scope
+          #s_eval $CONSR $CADDDRR # swich to be enable closure, without recursive call...
+          s_eval $CONSR $2
         fi
         ;;
     esac
