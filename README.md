@@ -109,7 +109,7 @@ C:\Users\TAKIZAWA Yozo\busybox>
 
 * Built-in functions in Pure LISP: `cons`, `car`, `cdr`, `atom`, `eq`
 * Built-in functions not in Pure LISP: `length` to treat lists as numbers
-* Special forms: `quote`, `cond` and lexcally scoped `lambda`
+* Special forms: `quote`, `cond` and dynamically scoped `lambda`
 * Special form `def` to bind variables in global environment with quoted values
 * Simple S-expression input and output functions
 * Simple REPL with `exit` command and `-s` prompt suppression mode
