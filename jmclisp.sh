@@ -308,7 +308,7 @@ s_pair () {
 s_assq () {
   s_null $2
   if [ $SNULLR = t ]; then
-    SASSQ=nil
+    SASSQR=nil
   else
     caar $2
     eq $CAARR $1
@@ -331,6 +331,20 @@ s_length () {
   fi
 }
 
+s_lookup () {
+  s_assq $1 $2
+  s_null $SASSQR
+  if [ $SNULLR = t ]; then
+    s_assq $1 $ENV
+    s_null $SASSQR
+    if [ $SNULLR = t ]; then
+      SLOOKUPR=nil
+      return
+    fi
+  fi
+  SLOOKUPR=$SASSQR
+}
+
 s_eval () {
   eq $1 t
   if [ $EQR = t ]; then
@@ -341,9 +355,9 @@ s_eval () {
     SEVALR=nil
   else
   atom $1
-  if [ $ATOMR = t ]; then
-    s_assq $1 $2
-    SEVALR=$SASSQR
+  if [ $ATOMR = t ]; then # user-defined variables
+    s_lookup $1 $2
+    SEVALR=$SLOOKUPR
   else
   car $1 && atom $CARR
   if [ $ATOMR = t ]; then
@@ -385,7 +399,7 @@ s_eval () {
         evcon $CDRR $2
         SEVALR=$EVCONR
         ;;
-      lambda)
+      lambda) # make closure
         cons $2 nil
         caddr $1
         cons $CADDRR $CONSR
@@ -396,7 +410,8 @@ s_eval () {
         ;;
       def)
         caddr $1
-        s_eval $CADDRR $2 && cons $SEVALR nil
+        s_eval $CADDRR $2
+        cons $SEVALR nil
         stackpush $CONSR
         cadr $1 && cons $CADRR nil
         stackpop
@@ -414,12 +429,17 @@ s_eval () {
         s_length $SEVALR
         SEVALR=$SLENGTHR
         ;;
-      *)
+      *) # user-defined functions
         car $1
-        s_assq $CARR $2
-        cdr $1
-        cons $SASSQR $CDRR
-        s_eval $CONSR $2
+        s_lookup $CARR $2
+        s_null $SLOOKUPR
+        if [ $SNULLR = t ]; then
+          SEVALR=nil
+        else
+          cdr $1
+          cons $SLOOKUPR $CDRR
+          s_eval $CONSR $2
+        fi
         ;;
     esac
   else
@@ -437,10 +457,11 @@ s_eval () {
 
     stackpush $CADDRR
     s_pair $CADRR $EVLISR
-    s_append $SPAIRR $CADDDRR
+    #s_append $SPAIRR $CADDDRR
     stackpop && CADDRR=$STACKPOPR
 
-    s_eval $CADDRR $SAPPENDR
+    #s_eval $CADDRR $SAPPENDR
+    s_eval $CADDRR $SPAIRR
   fi
   fi
   fi
@@ -498,8 +519,9 @@ s_repl () {
     s_lex $SREPLREADR
     SYNPOS=$((TNUM-1))
     s_syn
-    s_eval $SSYNR $ENV
+    s_eval $SSYNR nil
     s_display $SEVALR && printf $LF
+    SEVALR=nil
     s_repl
   fi
 }
