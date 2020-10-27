@@ -111,7 +111,8 @@ C:\Users\TAKIZAWA Yozo\busybox>
 ## LISP Specification in this software
 
 * Built-in functions in Pure LISP: `cons`, `car`, `cdr`, `atom`, `eq`
-* Built-in functions not in Pure LISP: `length` to treat lists as numbers
+* Built-in function not in Pure LISP: `length` to treat lists as numbers
+* Built-in function not in Pure LISP: `eval` to do meta-programming
 * Special forms: `quote`, `cond` and lexically scoped `lambda`
 * Special form `def` to bind variables in global environment
 * Simple S-expression input and output functions
