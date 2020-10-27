@@ -490,10 +490,10 @@ s_eval () {
         if [ $SNULLR = t ]; then
           SEVALR=nil
         else
-          cadddr $SLOOKUPR
           cdr $1
           cons $SLOOKUPR $CDRR
-          #s_eval $CONSR $CADDDRR # swich to be enable closure, without recursive call...
+          #cadddr $SLOOKUPR       # switch to be enable closure to comment out
+          #s_eval $CONSR $CADDDRR # and replace s_eval call, without recursive call...
           s_eval $CONSR $2
         fi
         ;;
