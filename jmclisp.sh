@@ -523,7 +523,6 @@ s_eval () {
     fi
 
     stackpush $CADDRR
-    s_null $CADRR
     s_pair $CADRR $SEARGSR
     s_append $SPAIRR $CADDDRR
     stackpop && CADDRR=$STACKPOPR
