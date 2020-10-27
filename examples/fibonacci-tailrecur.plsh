@@ -1,0 +1,20 @@
+(def append
+  (lambda (a b)
+     (cond ((eq a nil) b)
+           (t (append (cdr a)
+              (cons (car a) b))))))
+
+(def fibtr
+  (lambda (n f1 f2)
+     (cond ((eq n nil) f1)
+           (t (fibtr (cdr n) f2 (append f1 f2))))))
+
+(def 15 '(
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0
+))
+
+(length (fibtr 15 nil '(0)))
+
+exit
+
