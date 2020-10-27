@@ -1,4 +1,4 @@
-(def or (lambda (a b) (cond (a t) (t b))))
+(def or (lambda (x y) (cond (x t) (t y))))
 
 (def mkassoc
   (lambda (a b)

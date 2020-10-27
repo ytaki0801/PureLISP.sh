@@ -1,8 +1,9 @@
 #!/bin/sh
 #
+# PureLISP.sh
+#
 # A Pure LISP interpreter by POSIX-conformant shell
-# Evaluator defined in McCarthy's 1960 paper
-# with basic functions for conscell operations,
+# Evaluator with basic functions for conscell operations,
 # S-expression input/output and simple REPL
 #
 # This code is licensed under CC0.
@@ -169,6 +170,14 @@ s_syn () {
   fi
 }
 
+s_read () {
+  TNUM=0
+  s_lex $1
+  SYNPOS=$((TNUM-1))
+  s_syn
+  SREADR=$SSYNR
+}
+
 
 # Stack implementation for recursive calls
 
@@ -186,78 +195,12 @@ stackpop ()
 
 # The evaluator: s_eval and utility functions
 
-caar () {
-  car $1
-  car $CARR
-  CAARR=$CARR
-}
-cadr () {
-  cdr $1
-  car $CDRR
-  CADRR=$CARR
-}
-cdar () {
-  car $1
-  cdr $CARR
-  CDARR=$CDRR
-}
-cddr () {
-  cdr $1
-  cdr $CDRR
-  CDDRR=$CDRR
-}
-cadar () {
-  car $1
-  cdr $CARR
-  car $CDRR
-  CADARR=$CARR
-}
-cddar () {
-  car $1
-  cdr $CARR
-  cdr $CDRR
-  CDDARR=$CDRR
-}
-caddr () {
-  cdr $1
-  cdr $CDRR
-  car $CDRR
-  CADDRR=$CARR
-}
-cdddr () {
-  cdr $1
-  cdr $CDRR
-  cdr $CDRR
-  CDDDRR=$CDRR
-}
-caddar () {
-  car $1
-  cdr $CARR
-  cdr $CDRR
-  car $CDRR
-  CADDARR=$CARR
-}
-cadddr () {
-  cdr $1
-  cdr $CDRR
-  cdr $CDRR
-  car $CDRR
-  CADDDRR=$CARR
-}
-caaddr () {
-  cdr $1
-  cdr $CDRR
-  car $CDRR
-  car $CARR
-  CAADDRR=$CARR
-}
-cdddar () {
-  car $1
-  cdr $CARR
-  cdr $CDRR
-  cdr $CDRR
-  CDDDARR=$CDRR
-}
+caar () { car $1; car $CARR; CAARR=$CARR; }
+cadr () { cdr $1; car $CDRR; CADRR=$CARR; }
+cdar () { car $1; cdr $CARR; CDARR=$CDRR; }
+cadar () { car $1; cdr $CARR; car $CDRR; CADARR=$CARR; }
+caddr () { cdr $1; cdr $CDRR; car $CDRR; CADDRR=$CARR; }
+cadddr () { cdr $1; cdr $CDRR; cdr $CDRR; car $CDRR; CADDDRR=$CARR; }
 
 s_null () { eq $1 nil && SNULLR=$EQR; }
 
@@ -331,20 +274,6 @@ s_length () {
   fi
 }
 
-s_lookup () {
-  s_assq $1 $2
-  s_null $SASSQR
-  if [ $SNULLR = t ]; then
-    s_assq $1 $ENV
-    s_null $SASSQR
-    if [ $SNULLR = t ]; then
-      SLOOKUPR=nil
-      return
-    fi
-  fi
-  SLOOKUPR=$SASSQR
-}
-
 s_cond () {
   caar $1
   s_eval $CAARR $2
@@ -360,6 +289,42 @@ s_cond () {
   fi
 }
 
+s_builtins () {
+  case $1 in
+    t|nil)
+      SBUILTINSR=$1
+      ;;
+    cons|car|cdr|eq|atom)
+      SBUILTINSR=$1
+      ;;
+    length|eval)
+      SBUILTINSR=$1
+      ;;
+    *)
+      SBUILTINSR=notbuiltins
+      ;;
+  esac
+}
+
+s_lookup () {
+  s_builtins $1
+  if [ $SBUILTINSR = $1 ]; then
+    SLOOKUPR=$1
+    return
+  fi
+  s_assq $1 $2
+  s_null $SASSQR
+  if [ $SNULLR = t ]; then
+    s_assq $1 $ENV
+    s_null $SASSQR
+    if [ $SNULLR = t ]; then
+      SLOOKUPR=nil
+      return
+    fi
+  fi
+  SLOOKUPR=$SASSQR
+}
+
 s_eargs () {
   s_null $1
   if [ $SNULLR = t ]; then
@@ -368,169 +333,132 @@ s_eargs () {
     car $1 && s_eval $CARR $2
     stackpush $SEVALR
     cdr $1 && s_eargs $CDRR $2
-    stackpop
-    cons $STACKPOPR $SEARGSR
+    stackpop && SEVALR=$STACKPOPR
+    cons $SEVALR $SEARGSR
     SEARGSR=$CONSR
   fi
 }
 
 s_eval () {
-  eq $1 t    # pre-setting value
-  if [ $EQR = t ]; then
-    SEVALR=t
-  else
-  eq $1 nil  # pre-setting value
-  if [ $EQR = t ]; then
-    SEVALR=nil
-  else
   atom $1
-  if [ $ATOMR = t ]; then  # user-defined vars by def
+  if [ $ATOMR = t ]; then
     s_lookup $1 $2
     SEVALR=$SLOOKUPR
-  else
-  car $1 && atom $CARR
+    return
+  fi
+  car $1
+  case $CARR in
+    quote)
+      cadr $1
+      SEVALR=$CADRR
+      ;;
+    cond)
+      cdr $1
+      s_cond $CDRR $2
+      SEVALR=$SCONDR
+      ;;
+    lambda)
+      cons $2 nil
+      caddr $1
+      cons $CADDRR $CONSR
+      cadr $1
+      cons $CADRR $CONSR
+      cons lambda $CONSR
+      SEVALR=$CONSR
+      ;;
+    def)
+      caddr $1
+      s_eval $CADDRR $2
+      cadr $1
+      cons $CADRR $SEVALR
+      cons $CONSR $ENV
+      ENV=$CONSR
+      SEVALR=$CADRR
+      ;;
+    *)
+      s_eval $CARR $2
+      stackpush $SEVALR
+      cdr $1
+      s_eargs $CDRR $2
+      stackpop && SEVALR=$STACKPOPR
+      s_apply $SEVALR $SEARGSR
+      SEVALR=$SAPPLYR
+      ;;
+  esac
+}
+
+s_apply () {
+  atom $1
   if [ $ATOMR = t ]; then
-    car $1
-    case $CARR in
-      quote)
-        cadr $1 && SEVALR=$CADRR
-        ;;
-      atom)
-        cadr $1 && s_eval $CADRR $2
-        atom $SEVALR && SEVALR=$ATOMR
-        ;;
-      eq)
-        caddr $1 && s_eval $CADDRR $2
-        stackpush $SEVALR
-        cadr  $1 && s_eval $CADRR  $2
-        stackpop && SEVALR_EQ2=$STACKPOPR
-        eq $SEVALR $SEVALR_EQ2
-        SEVALR=$EQR
+    # builtin-funcs exec
+    case $1 in
+      cons)
+        cadr $2
+        car $2
+        cons $CARR $CADRR
+        SAPPLYR=$CONSR
         ;;
       car)
-        cadr $1 && s_eval $CADRR $2
-        car $SEVALR && SEVALR=$CARR
+        car $2
+        car $CARR
+        SAPPLYR=$CARR
         ;;
       cdr)
-        cadr $1 && s_eval $CADRR $2
-        cdr $SEVALR && SEVALR=$CDRR
+        car $2
+        cdr $CARR
+        SAPPLYR=$CDRR
         ;;
-      cons)
-        caddr $1 && s_eval $CADDRR $2
-        stackpush $SEVALR
-        cadr  $1 && s_eval $CADRR  $2
-        stackpop && SEVALR_CONS2=$STACKPOPR
-        cons $SEVALR $SEVALR_CONS2
-        SEVALR=$CONSR
+      eq)
+        cadr $2
+        car $2
+        eq $CARR $CADRR
+        SAPPLYR=$EQR
+        ;;
+      atom)
+        car $2
+        atom $CARR
+        SAPPLYR=$ATOMR
         ;;
       length)
-        cadr $1
-        s_eval $CADRR $2
         SLENGTHR=0
-        s_length $SEVALR
-        SEVALR=$SLENGTHR
+        car $2
+        s_length $CARR
+        SAPPLYR=$SLENGTHR
+        SLENGTHR=0
         ;;
       eval)
-        caddr $1
-        s_append $CADDRR $2
-        cadr $1
-        s_eval $CADRR $SAPPENDR
-        ;;
-      cond)
-        cdr $1
-        s_cond $CDRR $2
-        SEVALR=$SCONDR
-        ;;
-      if)
-        cadr $1
-        s_eval $CADRR $2
-        eq $SEVALR t
-        if [ $EQR = t ]; then
-          caddr $1
-          s_eval $CADDRR $2
-        else
-          cdddr $1
-          s_null $CDDDRR
-          if [ $SNULLR = t ]; then
-            SEVALR=nil
-          else
-            cadddr $1
-            s_eval $CADDDRR $2
-          fi
-        fi
-        ;;
-      lambda)  # making closure
-        cons $2 nil
-        caddr $1
-        cons $CADDRR $CONSR
-        cadr $1
-        cons $CADRR $CONSR
-        cons lambda $CONSR
-        SEVALR=$CONSR
-        ;;
-      def)
-        caddr $1
-        s_eval $CADDRR $2
-        cons $SEVALR nil
-        stackpush $CONSR
-        cadr $1
-        cons $CADRR nil
-        stackpop && DEFVALUE=$STACKPOPR
-        stackpush $CADRR
-        s_pair $CONSR $DEFVALUE
-        s_append $SPAIRR $ENV
-        ENV=$SAPPENDR
-        stackpop && DEFNAME=$STACKPOPR
-        SEVALR=$DEFNAME
-        ;;
-      *)  # user-defined funcs by def
-        car $1
-        s_lookup $CARR $2
-        s_null $SLOOKUPR
-        if [ $SNULLR = t ]; then
-          SEVALR=nil
-        else
-          cdr $1
-          cons $SLOOKUPR $CDRR
-          #cadddr $SLOOKUPR       # switch to be enable closure to comment out
-          #s_eval $CONSR $CADDDRR # and replace s_eval call, without recursive call...
-          s_eval $CONSR $2
-        fi
+        cadr $2
+        car $2
+        s_eval $CARR $CADRR
+        SAPPLYR=$SEVALR
         ;;
     esac
-  else    # lambda-expression itself at the first in a list
-    car $1
-    s_eval $CARR $2   # f
-
-    stackpush $SEVALR
-    cdr $1
-    s_eargs $CDRR $2  # args
-    stackpop && SEVALR=$STACKPOPR
-
-    cadr   $SEVALR    # lvars
-    caddr  $SEVALR    # lbody
-    cadddr $SEVALR    # lenvs
+  else
+    # lambda-expression exec
+    cadr $1   # lvars
+    caddr $1  # lbody
+    cadddr $1 # lenvs
+    stackpush $CADDDRR
 
     atom $CADRR
     if [ $ATOMR = t ]; then
       s_null $CADRR
       if [ $SNULLR = t ]; then
+        # when the arg is ()
         s_eval $CADDRR $ENV
+        SAPPLYR=$SEVALR
       else
-        SEVALR=$SEARGSR
+        # when the arg is atom
+        SAPPLYR=$2
       fi
       return
     fi
 
-    stackpush $CADDRR
-    s_pair $CADRR $SEARGSR
+    s_pair $CADRR $2
+    stackpop && CADDDRR=$STACKPOPR
     s_append $SPAIRR $CADDDRR
-    stackpop && CADDRR=$STACKPOPR
-
     s_eval $CADDRR $SAPPENDR
-  fi
-  fi
-  fi
+    SAPPLYR=$SEVALR
   fi
 }
 
@@ -552,10 +480,8 @@ s_repl () {
   fi
   s_replread
   if [ ! $SREPLREADR = exit ]; then
-    s_lex $SREPLREADR
-    SYNPOS=$((TNUM-1))
-    s_syn
-    s_eval $SSYNR nil
+    s_read $SREPLREADR
+    s_eval $SREADR nil
     s_display $SEVALR && printf $LF
     SEVALR=nil
     s_repl
@@ -566,7 +492,6 @@ s_repl () {
 # exec REPL with initialization
 
 CNUM=0
-TNUM=0
 STACKNUM=0
 ENV=nil
 if [ "$1" != "-s" ]; then
@@ -574,4 +499,5 @@ if [ "$1" != "-s" ]; then
 else
   PROMPT=nil
 fi
+
 s_repl

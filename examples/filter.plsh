@@ -1,5 +1,5 @@
 (def filter
-  '(lambda (f x)
+  (lambda (f x)
      (cond ((eq x nil) nil)
            ((f (car x))
             (cons (car x) (filter f (cdr x))))
@@ -10,7 +10,7 @@
 
 (cons '= (cons vs nil))
 
-(def ch '(lambda (x) (eq (car x) 'o)) vs)
+(def ch (lambda (x) (eq (car x) 'o)) vs)
 
 (cons '= (cons ch nil))
 

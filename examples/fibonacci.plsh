@@ -1,11 +1,11 @@
 (def append
-  '(lambda (a b)
+  (lambda (a b)
      (cond ((eq a nil) b)
            (t (append (cdr a)
               (cons (car a) b))))))
 
 (def fib
-  '(lambda (n)
+  (lambda (n)
      (cond ((eq n '()) '())
            ((eq (cdr n) '()) '(0))
            (t (append (fib (cdr n))
@@ -13,18 +13,20 @@
 
 (def ten '(0 0 0 0 0 0 0 0 0 0))
 
-(cons '(fib ten) (cons '= (cons (length (fib ten)) nil)))
+(cons '(fib ten) (cons '=
+(cons (length (fib ten)) nil)))
 
 (def fib2
-  '(lambda (n f1 f2)
-     (cond ((eq n '()) f1)
+  (lambda (n f1 f2)
+     (cond ((eq n nil) f1)
            (t (fib2 (cdr n) f2 (append f1 f2))))))
 
 (def zero '())
 
 (def one '(0))
 
-(cons '(fib2 ten zero one) (cons '= (cons (length (fib2 ten zero one)) nil)))
+(cons '(fib2 ten zero one) (cons '=
+(cons (length (fib2 ten zero one)) nil)))
 
 exit
 

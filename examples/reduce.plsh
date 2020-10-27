@@ -1,5 +1,5 @@
 (def reduce
-  '(lambda (f L i)
+  (lambda (f L i)
      (cond ((eq L nil) i)
            (t (f (car L) (reduce f (cdr L) i))))))
 
@@ -11,12 +11,12 @@
 
 (cons '= (cons list2 nil))
 
-(def r1 (reduce 'cons list1 list2))
+(def r1 (reduce cons list1 list2))
 
-(cons '= (cons '(reduce 'cons list1 list2)
+(cons '= (cons '(reduce cons list1 list2)
 (cons '= (cons r1 nil))))
 
-(def rappend '(lambda (x y) (reduce 'cons x y)))
+(def rappend (lambda (x y) (reduce cons x y)))
 
 (cons '= (cons rappend nil))
 
@@ -24,9 +24,9 @@
 
 (cons '= (cons list3 nil))
 
-(def r2 (reduce 'rappend list3 nil))
+(def r2 (reduce rappend list3 nil))
 
-(cons '= (cons '(reduce 'rappend list3 nil)
+(cons '= (cons '(reduce rappend list3 nil)
 (cons '= (cons r2 nil))))
 
 exit

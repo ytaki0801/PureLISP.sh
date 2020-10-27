@@ -2,13 +2,11 @@
 
 (def func1 (lambda () (cons x x)))
 
-(func1)
-
 (def func2 (lambda (x) (func1)))
 
-(cons
 (func2 '20)
-(cons '(= must be (10 . 10) in lexical scope) nil))
+
+'(= must be (10 . 10) in lexical scope)
 
 (((((lambda (x) (lambda (y) (lambda (z) (lambda (w)
 (cons (cons (cons (cons nil x) y) z) w)))))
