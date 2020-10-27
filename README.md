@@ -41,16 +41,17 @@ S> (def reduce
              (t (f (car L) (reduce f (cdr L) i))))))
 
 reduce
-S> (reduce cons (a b c) (d e f g))
+S> (reduce cons '(a b c) '(d e f g))
 
 (a b c d e f g)
 S> (def rappend (lambda (x y) (reduce cons x y)))
 
 rappend
-S> (reduce rappend ((a b) (c d e) (f) (g h i)) ())
+S> (reduce rappend '((a b) (c d e) (f) (g h i)) ())
 
 (a b c d e f g h i)
 S> exit
+
 
 C:\Users\TAKIZAWA Yozo\busybox>
 ```
@@ -112,7 +113,7 @@ C:\Users\TAKIZAWA Yozo\busybox>
 * Built-in functions in Pure LISP: `cons`, `car`, `cdr`, `atom`, `eq`
 * Built-in functions not in Pure LISP: `length` to treat lists as numbers
 * Special forms: `quote`, `cond` and lexically scoped `lambda`
-* Special form `def` to bind variables in global environment with quoted values
+* Special form `def` to bind variables in global environment
 * Simple S-expression input and output functions
 * Simple REPL with `exit` command and `-s` prompt suppression mode
 
@@ -121,6 +122,7 @@ C:\Users\TAKIZAWA Yozo\busybox>
 * Conscells are firstly implemented to program as a metacircular evaluator
 * Pseudo-Array and Stack implementation by using gloval variables
 * Using pattern-matching, to do S-expression lexical analysis especially
+* Firstly implemented as a John McCarthy's Original Lisp evaluator but now a SICP's one
 
 ## Bugs and TODO
 
