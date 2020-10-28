@@ -8,15 +8,9 @@
 
 (def k '(Apple Orange Lemmon))
 
-(cons '= (cons k nil))
-
 (def v '(120 210 180))
 
-(cons '= (cons v nil))
-
 (def vs (mkassoc k v))
-
-(cons '= (cons '(mkassoc k v) (cons '= (cons vs 'nil))))
 
 (def assoc
   (lambda (k vs)
@@ -25,14 +19,11 @@
             (car vs))
            (t (assoc k (cdr vs))))))
 
-(cons '(assoc 'Orange vs)
-(cons '= (cons (assoc 'Orange vs) nil)))
+(assoc 'Orange vs)
 
-(cons '(car (assoc 'Orange vs))
-(cons '= (cons (car (assoc 'Orange vs)) nil)))
+(car (assoc 'Orange vs))
 
-(cons '(cdr (assoc 'Orange vs))
-(cons '= (cons (cdr (assoc 'Orange vs)) nil)))
+(cdr (assoc 'Orange vs))
 
 exit
 
