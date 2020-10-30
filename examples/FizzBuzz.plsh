@@ -36,7 +36,13 @@
     (cond ((eq n nil) r)
           (t (FizzBuzz (cdr n) (cons (FB n) r))))))
 
-(FizzBuzz '(n n n n n n n n n n n n n n n))
+(def thirty '(
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+))
+
+(FizzBuzz thirty)
 
 exit
 
