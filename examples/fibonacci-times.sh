@@ -23,8 +23,7 @@ done
 COMMON="(def append
   (lambda (a b)
      (cond ((eq a nil) b)
-           (t (append (cdr a)
-              (cons (car a) b))))))
+           (t (cons (car a) (append (cdr a) b))))))
 
 (def zero '())
 

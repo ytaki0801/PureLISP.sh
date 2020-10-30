@@ -65,8 +65,7 @@ C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh
 (def append
   (lambda (a b)
      (cond ((eq a nil) b)
-           (t (append (cdr a)
-              (cons (car a) b))))))
+           (t (cons (car a) (append (cdr a) b))))))
 
 (def fib
   (lambda (n)
@@ -75,34 +74,17 @@ C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh
            (t (append (fib (cdr n))
                       (fib (cdr (cdr n))))))))
 
-(def ten '(0 0 0 0 0 0 0 0 0 0))
+(def 10 '(0 0 0 0 0 0 0 0 0 0))
 
-(cons '(fib ten) (cons '=
-(cons (length (fib ten)) nil)))
-
-(def fib2
-  (lambda (n f1 f2)
-     (cond ((eq n nil) f1)
-           (t (fib2 (cdr n) f2 (append f1 f2))))))
-
-(def zero '())
-
-(def one '(0))
-
-(cons '(fib2 ten zero one) (cons '=
-(cons (length (fib2 ten zero one)) nil)))
+(length (fib 10))
 
 exit
 
 ~/busybox $ sh PureLISP.sh -s < examples/fibonacci.plsh
 append
 fib
-ten
-((fib ten) = 55)
-fib2
-zero
-one
-((fib2 ten zero one) = 55)
+10
+55
 ~/busybox $ exit
 
 C:\Users\TAKIZAWA Yozo\busybox>
