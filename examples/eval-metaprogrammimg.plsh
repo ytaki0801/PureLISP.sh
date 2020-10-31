@@ -1,0 +1,24 @@
+(eval '(cdr x) '((x . (a b c))))
+
+(def list2 (lambda (a1 a2) (cons a1 (cons a2 nil))))
+
+(def if
+  (lambda (con tr fl env)
+    (cond ((eval con env) (eval tr env))
+          (t (eval fl env)))))
+
+(def map
+  (lambda (f x)
+     (if '(eq x nil)
+         'nil
+         '(cons (f (car x)) (map f (cdr x)))
+         (list2 (cons 'f f) (cons 'x x)))))
+
+(def vs '((hoge . 10) (hage . 20) (hige . 30)))
+
+(map car vs)
+
+(map cdr vs)
+
+exit
+
