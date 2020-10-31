@@ -6,13 +6,13 @@
 
 (func2 '20)
 
-'(= must be (10 . 10) in lexical scope)
+; = must be (10 . 10) in lexical scope
 
 (((((lambda (x) (lambda (y) (lambda (z) (lambda (w)
 (cons (cons (cons (cons nil x) y) z) w)))))
 '1) '2) '3) '4)
 
-'(= must be ((((() . 1) . 2) . 3) . 4) for currying)
+; = must be ((((() . 1) . 2) . 3) . 4) for currying
 
 (def mycons (lambda (x y) (lambda (f) (f x y))))
 
@@ -24,11 +24,11 @@
 
 (mycar s)
 
-'(= must be hoge by closure)
+; = must be hoge by closure
 
 (mycdr s)
 
-'(= must be hage by closure)
+; = must be hage by closure)
 
 exit
 

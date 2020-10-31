@@ -52,7 +52,6 @@ S> (reduce rappend '((a b) (c d e) (f) (g h i)) ())
 (a b c d e f g h i)
 S> exit
 
-
 C:\Users\TAKIZAWA Yozo\busybox>
 ```
 
@@ -61,30 +60,53 @@ prompt suppression mode, via redirection in a shell interpreter.
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh
-~/busybox $ cat examples/fibonacci.plsh
-(def append
-  (lambda (a b)
-     (cond ((eq a nil) b)
-           (t (cons (car a) (append (cdr a) b))))))
+~/busybox $ cat examples/lexicalscope-tests.plsh
+(def x '10)
 
-(def fib
-  (lambda (n)
-     (cond ((eq n '()) '())
-           ((eq (cdr n) '()) '(0))
-           (t (append (fib (cdr n))
-                      (fib (cdr (cdr n))))))))
+(def func1 (lambda () (cons x x)))
 
-(def 10 '(0 0 0 0 0 0 0 0 0 0))
+(def func2 (lambda (x) (func1)))
 
-(length (fib 10))
+(func2 '20)
+
+; = must be (10 . 10) in lexical scope
+
+(((((lambda (x) (lambda (y) (lambda (z) (lambda (w)
+(cons (cons (cons (cons nil x) y) z) w)))))
+'1) '2) '3) '4)
+
+; = must be ((((() . 1) . 2) . 3) . 4) for currying
+
+(def mycons (lambda (x y) (lambda (f) (f x y))))
+
+(def mycar (lambda (f) (f (lambda (x y) x))))
+
+(def mycdr (lambda (f) (f (lambda (x y) y))))
+
+(def s (mycons 'hoge 'hage))
+
+(mycar s)
+
+; = must be hoge by closure
+
+(mycdr s)
+
+; = must be hage by closure)
 
 exit
 
-~/busybox $ sh PureLISP.sh -snl < examples/fibonacci.plsh
-append
-fib
-10
-55
+~/busybox $ sh PureLISP.sh -snl < examples/lexicalscope-tests.plsh
+x
+func1
+func2
+(10 . 10)
+((((() . 1) . 2) . 3) . 4)
+mycons
+mycar
+mycdr
+s
+hoge
+hage
 ~/busybox $ exit
 
 C:\Users\TAKIZAWA Yozo\busybox>
@@ -98,7 +120,7 @@ C:\Users\TAKIZAWA Yozo\busybox>
 * Built-in function not in Pure LISP: `length` to treat lists as numbers
 * Built-in function not in Pure LISP: `eval` to do meta-programming
 * Simple S-expression input and output functions
-* Simple REPL with `exit` command
+* Simple REPL with `exit` command and comment notation `;`
 * Exec options:
 	* no options: prompt and pre-loading init file "init.plsh" in the current directory
 	* `-snl` or `-s`: no prompt and no pre-loading init file
