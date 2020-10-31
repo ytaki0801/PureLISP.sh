@@ -472,24 +472,32 @@ s_apply () {
 
 s_replread () {
   SREPLREADR=""
-  read srplrd
-  while [ ! $srplrd = $LF ]; do
+  while read srplrd; do
+    if [ -z $srplrd ]; then
+      break
+    fi
     SREPLREADR=$SREPLREADR$srplrd
-    read srplrd
   done
 }
 
 s_repl () {
-  if [ ! $PROMPT = nil ]; then
+  if [ "$PROMPT" = "t" ]; then
     printf "S> "
   fi
   s_replread
-  if [ ! $SREPLREADR = exit ]; then
-    s_read $SREPLREADR
-    s_eval $SREADR nil
-    s_display $SEVALR && printf $LF
-    SEVALR=nil
-    s_repl
+  if [ -z $SREPLREADR ]; then
+    PROMPT=t
+    s_repl < /dev/tty
+  else
+    if [ "$SREPLREADR" = "exit" ]; then
+      exit 0
+    else
+      s_read $SREPLREADR
+      s_eval $SREADR nil
+      s_display $SEVALR && printf $LF
+      SEVALR=nil
+      s_repl
+    fi
   fi
 }
 
@@ -499,10 +507,11 @@ s_repl () {
 CNUM=0
 STACKNUM=0
 ENV=nil
-if [ "$1" != "-s" ]; then
-  PROMPT=t
-else
+PROMPT=t
+
+if [ "$1" = "-s" ]; then
   PROMPT=nil
 fi
 
 s_repl
+
