@@ -1,45 +1,106 @@
-(def list (lambda x x))
+(def list (lambda a a))
 
-(def or (lambda (x y) (cond (x t) (t y))))
+(def and (lambda (a b) (cond (a b) (t nil))))
 
-(def append
-  (lambda (a b)
-     (cond ((eq a nil) b)
-           (t (append (cdr a)
-              (cons (car a) b))))))
+(def or (lambda (a b) (cond (a t) (t b))))
 
-(def pairs
-  (lambda (a b)
-     (cond ((or (eq a nil) (eq b nil)) nil)
-           (t (cons (cons (car a) (car b))
-                    (pairs (cdr a) (cdr b))))))) 
+(def not (lambda (a) (cond (a nil) (t t))))
+
+(def null (lambda (a) (eq a nil)))
+
+(def reduce
+  (lambda (f L i)
+     (cond ((null L) i)
+           (t (f (car L) (reduce f (cdr L) i))))))
+
+(def append2 (lambda (a b) (reduce cons a b)))
+
+(def append (lambda a (reduce append2 a nil)))
+
+(def reverse
+  (lambda (a)
+    (cond ((null a) nil)
+          (t (append (reverse (cdr a))
+                     (list (car a)))))))
+
+(def map
+  (lambda (f . a)
+    (cond ((null a) nil)
+          ((null (car a)) nil)
+          ((null (cdr a))
+           (map1 f (car a)))
+          (t
+           (map2 f (car a) (cadr a))))))
+
+(def map1
+  (lambda (f x)
+     (cond ((null x) nil)
+           (t (cons (f (car x))
+                    (map f (cdr x)))))))
+
+(def map2
+  (lambda (f a b)
+    (cond ((or (null a) (null b)) nil)
+          (t (cons (f (car a) (car b))
+                   (map2 f (cdr a) (cdr b)))))))
+
+(def pairs (lambda (a b) (map cons a b)))
 
 (def assoc
   (lambda (k vs)
-     (cond ((eq vs '()) nil)
+     (cond ((null vs) nil)
            ((eq (car (car vs)) k)
             (car vs))
            (t (assoc k (cdr vs))))))
 
-(def map1
-  (lambda (f x)
-     (cond ((eq x nil) nil)
-           (t (cons (f (car x))
-                    (map1 f (cdr x)))))))
+(def member
+  (lambda (k vs)
+     (cond ((null vs) nil)
+           ((eq (car vs) k) vs)
+           (t (member k (cdr vs))))))
 
 (def filter
   (lambda (f x)
-     (cond ((eq x nil) nil)
+     (cond ((null x) nil)
            ((f (car x))
             (cons (car x) (filter f (cdr x))))
            (t (filter f (cdr x))))))
 
-(def reduce
-  (lambda (f L i)
-     (cond ((eq L nil) i)
-           (t (f (car L) (reduce f (cdr L) i))))))
-
 (def fix (lambda (f) (f (lambda (x) ((fix f) x)))))
+
+(def caar (lambda (x) (car (car x))))
+
+(def cadr (lambda (x) (car (cdr x))))
+
+(def cdar (lambda (x) (cdr (car x))))
+
+(def cddr (lambda (x) (cdr (cdr x))))
+
+(def inc (lambda (n) (cons 'n n)))
+
+(def dec (lambda (n) (cdr n)))
+
+(def + append)
+
+(def 0 nil)
+
+(def 1 (inc 0))
+
+(def 2 (inc 1))
+
+(def 3 (inc 2))
+
+(def 4 (inc 3))
+
+(def 5 (inc 4))
+
+(def 6 (inc 5))
+
+(def 7 (inc 6))
+
+(def 8 (inc 7))
+
+(def 9 (inc 8))
 
 exit
 
