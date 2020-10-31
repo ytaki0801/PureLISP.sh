@@ -229,7 +229,7 @@ s_pair () {
     stackpush $ATOMR
     atom $2
     stackpop
-    if [ $STACKPOPR = nil -o $ATOMR = nil ]; then
+    if [ $STACKPOPR = nil -a $ATOMR = nil ]; then
       cdr $1
       stackpush $CDRR
       cdr $2
@@ -243,7 +243,14 @@ s_pair () {
       cons $CONSR $SPAIRR
       SPAIRR=$CONSR
     else
-      SPAIRR=nil
+      atom $1
+      if [ $ATOMR = t ]; then
+        cons $1 $2
+        cons $CONSR nil
+        SPAIRR=$CONSR
+      else
+        SPAIRR=nil
+      fi
     fi
   fi
 }
