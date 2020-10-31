@@ -489,15 +489,21 @@ s_repl () {
     PROMPT=t
     s_repl < /dev/tty
   else
-    if [ "$SREPLREADR" = "exit" ]; then
-      exit 0
-    else
-      s_read $SREPLREADR
-      s_eval $SREADR nil
-      s_display $SEVALR && printf $LF
-      SEVALR=nil
-      s_repl
-    fi
+    case "$SREPLREADR" in
+      "exit")
+        return 0
+        ;;
+      \;*)
+        s_repl
+        ;;
+      *)
+        s_read $SREPLREADR
+        s_eval $SREADR nil
+        s_display $SEVALR && printf $LF
+        SEVALR=nil
+        s_repl
+        ;;
+    esac
   fi
 }
 
@@ -507,11 +513,33 @@ s_repl () {
 CNUM=0
 STACKNUM=0
 ENV=nil
-PROMPT=t
+PROMPT=nil
+INITFILE=init.plsh
 
-if [ "$1" = "-s" ]; then
-  PROMPT=nil
+case "$1" in
+  "-s"|"-snl")
+    PROMPTOPTION=nil
+    LOADINITFILE=nil
+    ;;
+  "-sl")
+    PROMPTOPTION=nil
+    LOADINITFILE=t
+    ;;
+  "-nl")
+    PROMPTOPTION=t
+    LOADINITFILE=nil
+    ;;
+  *)
+    PROMPTOPTION=t
+    LOADINITFILE=t
+    ;;
+esac
+
+if [ -e $INITFILE -a $LOADINITFILE = t ]; then
+  s_repl < $INITFILE
 fi
+
+PROMPT=$PROMPTOPTION
 
 s_repl
 

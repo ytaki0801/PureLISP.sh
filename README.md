@@ -56,7 +56,7 @@ S> exit
 C:\Users\TAKIZAWA Yozo\busybox>
 ```
 
-Or, you can send a text file of LISP codes to PureLISP.sh with "-s" option,
+Or, you can send a text file of LISP codes to PureLISP.sh with "-snl" or "-sl" option,
 prompt suppression mode, via redirection in a shell interpreter.
 
 ```
@@ -80,7 +80,7 @@ C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh
 
 exit
 
-~/busybox $ sh PureLISP.sh -s < examples/fibonacci.plsh
+~/busybox $ sh PureLISP.sh -snl < examples/fibonacci.plsh
 append
 fib
 10
@@ -93,12 +93,17 @@ C:\Users\TAKIZAWA Yozo\busybox>
 ## LISP Specification in this software
 
 * Built-in functions in Pure LISP: `cons`, `car`, `cdr`, `atom`, `eq`
-* Built-in function not in Pure LISP: `length` to treat lists as numbers
-* Built-in function not in Pure LISP: `eval` to do meta-programming
 * Special forms: `quote`, `cond` and lexically scoped `lambda`
 * Special form `def` to bind variables in global environment
+* Built-in function not in Pure LISP: `length` to treat lists as numbers
+* Built-in function not in Pure LISP: `eval` to do meta-programming
 * Simple S-expression input and output functions
-* Simple REPL with `exit` command and `-s` prompt suppression mode
+* Simple REPL with `exit` command
+* Exec options:
+	* no options: prompt and pre-loading init file "init.plsh" in the current directory
+	* `-snl` or `-s`: no prompt and no pre-loading init file
+	* `-sl`: no prompt and pre-loading init file
+	* `-nl`: prompt and no pre-loading init file
 
 ## Shell Programming in this software
 
@@ -109,8 +114,6 @@ C:\Users\TAKIZAWA Yozo\busybox>
 
 ## Bugs and TODO
 
-* Introducing tail call optimization
-* More suitable error checks
 * Much more comments in the source code
 
 ## License

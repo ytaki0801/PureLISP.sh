@@ -1,0 +1,45 @@
+(def list (lambda x x))
+
+(def or (lambda (x y) (cond (x t) (t y))))
+
+(def append
+  (lambda (a b)
+     (cond ((eq a nil) b)
+           (t (append (cdr a)
+              (cons (car a) b))))))
+
+(def pairs
+  (lambda (a b)
+     (cond ((or (eq a nil) (eq b nil)) nil)
+           (t (cons (cons (car a) (car b))
+                    (pairs (cdr a) (cdr b))))))) 
+
+(def assoc
+  (lambda (k vs)
+     (cond ((eq vs '()) nil)
+           ((eq (car (car vs)) k)
+            (car vs))
+           (t (assoc k (cdr vs))))))
+
+(def map1
+  (lambda (f x)
+     (cond ((eq x nil) nil)
+           (t (cons (f (car x))
+                    (map1 f (cdr x)))))))
+
+(def filter
+  (lambda (f x)
+     (cond ((eq x nil) nil)
+           ((f (car x))
+            (cons (car x) (filter f (cdr x))))
+           (t (filter f (cdr x))))))
+
+(def reduce
+  (lambda (f L i)
+     (cond ((eq L nil) i)
+           (t (f (car L) (reduce f (cdr L) i))))))
+
+(def fix (lambda (f) (f (lambda (x) ((fix f) x)))))
+
+exit
+
