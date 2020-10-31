@@ -438,14 +438,16 @@ s_apply () {
     cadr $1   # lvars
     caddr $1  # lbody
     cadddr $1 # lenvs
+    stackpush $CADDRR
     stackpush $CADDDRR
+    stackpush $CADRR
 
     atom $CADRR
     if [ $ATOMR = t ]; then
       s_null $CADRR
       if [ $SNULLR = t ]; then
         # when the arg is ()
-        s_eval $CADDRR $ENV
+        s_eval $CADDRR $CADDDRR
         SAPPLYR=$SEVALR
       else
         # when the arg is atom
@@ -454,9 +456,11 @@ s_apply () {
       return
     fi
 
+    stackpop && CADRR=$STACKPOPR
     s_pair $CADRR $2
     stackpop && CADDDRR=$STACKPOPR
     s_append $SPAIRR $CADDDRR
+    stackpop && CADDRR=$STACKPOPR
     s_eval $CADDRR $SAPPENDR
     SAPPLYR=$SEVALR
   fi

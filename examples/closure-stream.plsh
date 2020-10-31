@@ -1,0 +1,20 @@
+(def make-linear
+  (lambda (x)
+    (cons x (lambda () (make-linear (cons 'n x))))))
+
+(def r0 (make-linear '(n n n n n)))
+
+(car r0)
+
+(def r1 ((cdr r0)))
+
+(car r1)
+
+(def r2 ((cdr r1)))
+
+(car r2)
+
+(def r3 ((cdr r2)))
+
+(car r3)
+
