@@ -24,25 +24,14 @@
                      (list (car a)))))))
 
 (def map
-  (lambda (f . a)
-    (cond ((null a) nil)
-          ((null (car a)) nil)
-          ((null (cdr a))
-           (map1 f (car a)))
-          (t
-           (map2 f (car a) (cadr a))))))
-
-(def map1
-  (lambda (f x)
-     (cond ((null x) nil)
-           (t (cons (f (car x))
-                    (map f (cdr x)))))))
-
-(def map2
-  (lambda (f a b)
-    (cond ((or (null a) (null b)) nil)
-          (t (cons (f (car a) (car b))
-                   (map2 f (cdr a) (cdr b)))))))
+  (lambda (f a . b)
+     (cond ((eq a nil) nil)
+           ((eq b nil)
+            (cons (f (car a))
+                  (map f (cdr a))))
+           (t
+            (cons (f (car a) (car (car b)))
+                  (map f (cdr a) (cdr (car b))))))))
 
 (def pairs (lambda (a b) (map cons a b)))
 
