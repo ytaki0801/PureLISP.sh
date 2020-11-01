@@ -1,0 +1,32 @@
+(def and (lambda (a b) (cond (a b) (t nil))))
+
+(def not (lambda (a) (cond (a nil) (t t))))
+
+(def le
+  (lambda (a b)
+    (cond ((and (eq a nil) (eq b nil)) t)
+          ((and (not (eq a nil)) (eq b nil)) nil)
+          ((and (eq a nil) (not (eq b nil))) t)
+          (t (le (cdr a) (cdr b))))))
+
+(def 1+ (lambda (n) (cons 'n n)))
+
+(def 1- (lambda (n) (cdr n)))
+
+(def 0 nil)
+
+(def 1 (1+ 0))
+
+(def 2 (1+ 1))
+
+(def tak
+  (lambda (x y z)
+    (cond ((le x y) z)
+          (t (tak (tak (1- x) y z)
+                  (tak (1- y) z x)
+                  (tak (1- z) x y))))))
+
+(tak 2 1 0)
+
+exit
+
