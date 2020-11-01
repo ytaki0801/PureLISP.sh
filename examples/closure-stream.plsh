@@ -2,7 +2,7 @@
   (lambda (x)
     (cons x (lambda () (make-linear (cons 'n x))))))
 
-(def s (make-linear '(n n n n n)))
+(def s (make-linear nil))
 
 (car s)
 
@@ -11,6 +11,10 @@
 (car ((cdr ((cdr s)))))
 
 (car ((cdr ((cdr ((cdr s)))))))
+
+(car ((cdr ((cdr ((cdr ((cdr s)))))))))
+
+(car ((cdr ((cdr ((cdr ((cdr ((cdr s)))))))))))
 
 exit
 

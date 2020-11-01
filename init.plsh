@@ -8,14 +8,17 @@
 
 (def null (lambda (a) (eq a nil)))
 
-(def reduce
-  (lambda (f L i)
-     (cond ((null L) i)
-           (t (f (car L) (reduce f (cdr L) i))))))
+(def append2
+  (lambda (a b)
+    (cond ((eq a nil) b)
+          (t (cons (car a) (append2 (cdr a) b))))))
 
-(def append2 (lambda (a b) (reduce cons a b)))
+(def flatten
+  (lambda (a)
+    (cond ((eq a nil) nil)
+          (t (append2 (car a) (flatten (cdr a)))))))
 
-(def append (lambda a (reduce append2 a nil)))
+(def append (lambda a (flatten a)))
 
 (def reverse
   (lambda (a)
@@ -54,6 +57,11 @@
            ((f (car x))
             (cons (car x) (filter f (cdr x))))
            (t (filter f (cdr x))))))
+
+(def reduce
+  (lambda (f L i)
+     (cond ((null L) i)
+           (t (f (car L) (reduce f (cdr L) i))))))
 
 (def fix (lambda (f) (f (lambda (x) ((fix f) x)))))
 
