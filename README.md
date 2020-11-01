@@ -60,53 +60,36 @@ prompt suppression mode, via redirection in a shell interpreter.
 
 ```
 C:\Users\TAKIZAWA Yozo\busybox>busybox.exe sh
-~/busybox $ cat examples/lexicalscope-tests.plsh
-(def x '10)
+~/busybox $ cat examples/closure-stream.plsh
+(def make-linear
+  (lambda (x)
+    (cons x (lambda () (make-linear (cons 'n x))))))
 
-(def func1 (lambda () (cons x x)))
+(def s (make-linear nil))
 
-(def func2 (lambda (x) (func1)))
+(car s)
 
-(func2 '20)
+(car ((cdr s)))
 
-; = must be (10 . 10) in lexical scope
+(car ((cdr ((cdr s)))))
 
-(((((lambda (x) (lambda (y) (lambda (z) (lambda (w)
-(cons (cons (cons (cons nil x) y) z) w)))))
-'1) '2) '3) '4)
+(car ((cdr ((cdr ((cdr s)))))))
 
-; = must be ((((() . 1) . 2) . 3) . 4) for currying
+(car ((cdr ((cdr ((cdr ((cdr s)))))))))
 
-(def mycons (lambda (x y) (lambda (f) (f x y))))
-
-(def mycar (lambda (f) (f (lambda (x y) x))))
-
-(def mycdr (lambda (f) (f (lambda (x y) y))))
-
-(def s (mycons 'hoge 'hage))
-
-(mycar s)
-
-; = must be hoge by closure
-
-(mycdr s)
-
-; = must be hage by closure)
+(car ((cdr ((cdr ((cdr ((cdr ((cdr s)))))))))))
 
 exit
 
-~/busybox $ sh PureLISP.sh -snl < examples/lexicalscope-tests.plsh
-x
-func1
-func2
-(10 . 10)
-((((() . 1) . 2) . 3) . 4)
-mycons
-mycar
-mycdr
+~/busybox $ sh PureLISP.sh -snl < examples/closure-stream.plsh
+make-linear
 s
-hoge
-hage
+()
+(n)
+(n n)
+(n n n)
+(n n n n)
+(n n n n n)
 ~/busybox $ exit
 
 C:\Users\TAKIZAWA Yozo\busybox>
