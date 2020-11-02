@@ -1,23 +1,37 @@
 (def and (lambda (a b) (cond (a b) (t nil))))
 
+(def or  (lambda (a b) (cond (a t) (t b))))
+
 (def not (lambda (a) (cond (a nil) (t t))))
 
 (def le
   (lambda (a b)
     (cond ((and (eq a nil) (eq b nil)) t)
-          ((and (not (eq a nil)) (eq b nil)) nil)
-          ((and (eq a nil) (not (eq b nil))) t)
-          (t (le (cdr a) (cdr b))))))
+          ((and (not (eq a nil)) (not (eq b nil)))
+           (cond ((eq (car a) (car b))
+                  (le (cdr a) (cdr b)))
+                 ((eq (car a) 'p) nil)
+                 (t t))) 
+          ((and (not (eq a nil)) (eq b nil))
+           (eq (car a) 'n))
+          ((and (eq a nil) (not (eq b nil)))
+           (eq (car b) 'p)))))
 
-(def 1+ (lambda (n) (cons 'n n)))
+(def 1+
+  (lambda (x)
+    (cond ((or (eq x nil) (eq (car x) 'p)) (cons 'p x))
+          (t (cdr x)))))
 
-(def 1- (lambda (n) (cdr n)))
+(def 1-
+  (lambda (x)
+    (cond ((or (eq x nil) (eq (car x) 'n)) (cons 'n x))
+          (t (cdr x)))))
 
 (def 0 nil)
 
-(def 1 (1+ 0))
+(def 5 '(p p p p p))
 
-(def 2 (1+ 1))
+(def 10 '(p p p p p p p p p p))
 
 (def tak
   (lambda (x y z)
@@ -26,7 +40,7 @@
                   (tak (1- y) z x)
                   (tak (1- z) x y))))))
 
-(tak 2 1 0)
+(length (tak 10 5 0))
 
 exit
 
