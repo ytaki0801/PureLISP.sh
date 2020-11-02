@@ -491,7 +491,7 @@ s_repl () {
   else
     case "$SREPLREADR" in
       "exit")
-        return 0
+        exit 0
         ;;
       \;*)
         s_repl

@@ -1,4 +1,8 @@
+;;;; list by atom variables
+
 (def list (lambda a a))
+
+;;;; logical functions
 
 (def and (lambda (a b) (cond (a b) (t nil))))
 
@@ -7,6 +11,8 @@
 (def not (lambda (a) (cond (a nil) (t t))))
 
 (def null (lambda (a) (eq a nil)))
+
+;;;; utility functions of list processing
 
 (def append2
   (lambda (a b)
@@ -63,7 +69,11 @@
      (cond ((null L) i)
            (t (f (car L) (reduce f (cdr L) i))))))
 
+;;;; lambda calculus
+
 (def fix (lambda (f) (f (lambda (x) ((fix f) x)))))
+
+;;;; conscell accessors
 
 (def caar (lambda (x) (car (car x))))
 
@@ -73,11 +83,38 @@
 
 (def cddr (lambda (x) (cdr (cdr x))))
 
-(def inc (lambda (n) (cons 'n n)))
+;;;; integers by list processing
 
-(def dec (lambda (n) (cdr n)))
+;;;; 0 is nil, positive (p p ...), negative (n n ...)
 
-(def + append)
+(def eqnum
+  (lambda (a b)
+    (and (eq (length a) (length b)) (eq (car a) (car b)))))
+
+(def le
+  (lambda (a b)
+    (cond ((eqnum a b) t)
+          ((and (not (eq a nil)) (not (eq b nil)))
+           (cond ((eq (car a) (car b))
+                  (le (cdr a) (cdr b)))
+                 ((eq (car a) 'p) nil)
+                 (t t))) 
+          ((and (not (eq a nil)) (eq b nil))
+           (eq (car a) 'n))
+          ((and (eq a nil) (not (eq b nil)))
+           (eq (car b) 'p)))))
+
+(def inc
+  (lambda (x)
+    (cond ((or (eq x nil) (eq (car x) 'p)) (cons 'p x))
+          (t (cdr x)))))
+
+(def dec
+  (lambda (x)
+    (cond ((or (eq x nil) (eq (car x) 'n)) (cons 'n x))
+          (t (cdr x)))))
+
+;(def add append)
 
 (def 0 nil)
 
@@ -99,5 +136,21 @@
 
 (def 9 (inc 8))
 
-exit
+(def n1 (dec 0))
+
+(def n2 (dec n1))
+
+(def n3 (dec n2))
+
+(def n4 (dec n3))
+
+(def n5 (dec n4))
+
+(def n6 (dec n5))
+
+(def n7 (dec n6))
+
+(def n8 (dec n7))
+
+(def n9 (dec n8))
 
