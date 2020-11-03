@@ -20,15 +20,15 @@
 
 (def not (lambda (a) (cond (a nil) (t t))))
 
-(def three '(n n n))
+(def 3 '(p p p))
 
-(def five '(n n n n n))
+(def 5 '(p p p p p))
 
 (def FB
   (lambda (n)
-    (cond ((and (divp n three) (divp n five)) 'FizzBuzz)
-          ((divp n three) 'Fizz)
-          ((divp n five)  'Buzz)
+    (cond ((and (divp n 3) (divp n 5)) 'FizzBuzz)
+          ((divp n 3) 'Fizz)
+          ((divp n 5) 'Buzz)
           (t (length n)))))
 
 (def FizzBuzz
@@ -36,13 +36,9 @@
     (cond ((eq n nil) r)
           (t (FizzBuzz (cdr n) (cons (FB n) r))))))
 
-(def thirty '(
-0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 
-0 0 0 0 0 0 0 0 0 0 
-))
+(def 15 '(p p p p p p p p p p p p p p p))
 
-(FizzBuzz thirty)
+(FizzBuzz 15 nil)
 
 exit
 

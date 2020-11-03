@@ -12,7 +12,7 @@
 
 (def null (lambda (a) (eq a nil)))
 
-;;;; utility functions of list processing
+;;;; utility functions for list processing
 
 (def append2
   (lambda (a b)
@@ -82,75 +82,4 @@
 (def cdar (lambda (x) (cdr (car x))))
 
 (def cddr (lambda (x) (cdr (cdr x))))
-
-;;;; integers by list processing
-
-;;;; 0 is nil, positive (p p ...), negative (n n ...)
-
-(def eqnum
-  (lambda (a b)
-    (and (eq (length a) (length b)) (eq (car a) (car b)))))
-
-(def le
-  (lambda (a b)
-    (cond ((eqnum a b) t)
-          ((and (not (eq a nil)) (not (eq b nil)))
-           (cond ((eq (car a) (car b))
-                  (le (cdr a) (cdr b)))
-                 ((eq (car a) 'p) nil)
-                 (t t))) 
-          ((and (not (eq a nil)) (eq b nil))
-           (eq (car a) 'n))
-          ((and (eq a nil) (not (eq b nil)))
-           (eq (car b) 'p)))))
-
-(def inc
-  (lambda (x)
-    (cond ((or (eq x nil) (eq (car x) 'p)) (cons 'p x))
-          (t (cdr x)))))
-
-(def dec
-  (lambda (x)
-    (cond ((or (eq x nil) (eq (car x) 'n)) (cons 'n x))
-          (t (cdr x)))))
-
-;(def add append)
-
-(def 0 nil)
-
-(def 1 (inc 0))
-
-(def 2 (inc 1))
-
-(def 3 (inc 2))
-
-(def 4 (inc 3))
-
-(def 5 (inc 4))
-
-(def 6 (inc 5))
-
-(def 7 (inc 6))
-
-(def 8 (inc 7))
-
-(def 9 (inc 8))
-
-(def n1 (dec 0))
-
-(def n2 (dec n1))
-
-(def n3 (dec n2))
-
-(def n4 (dec n3))
-
-(def n5 (dec n4))
-
-(def n6 (dec n5))
-
-(def n7 (dec n6))
-
-(def n8 (dec n7))
-
-(def n9 (dec n8))
 

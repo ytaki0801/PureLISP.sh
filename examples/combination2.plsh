@@ -1,0 +1,44 @@
+;;;; utility functions for list processing
+
+(def append2
+  (lambda (a b)
+    (cond ((eq a nil) b)
+          (t (cons (car a) (append2 (cdr a) b))))))
+
+(def flatten
+  (lambda (a)
+    (cond ((eq a nil) nil)
+          (t (append2 (car a) (flatten (cdr a)))))))
+
+(def map
+  (lambda (f a . b)
+     (cond ((eq a nil) nil)
+           ((eq b nil)
+            (cons (f (car a))
+                  (map f (cdr a))))
+           (t
+            (cons (f (car a) (car (car b)))
+                  (map f (cdr a) (cdr (car b))))))))
+
+(def filter
+  (lambda (f x)
+     (cond ((eq x nil) nil)
+           ((f (car x))
+            (cons (car x) (filter f (cdr x))))
+           (t (filter f (cdr x))))))
+
+;;;; 
+
+(def f (lambda (p) (cond ((eq (car p) (cdr p)) nil) (t t))))
+
+(def mm
+  (lambda (x)
+    (flatten
+      (map (lambda (a) (map (lambda (b) (cons a b)) x)) x))))
+
+(def combination2 (lambda (x) (filter f (mm x))))
+
+(combination2 '(a b c))
+
+exit
+
