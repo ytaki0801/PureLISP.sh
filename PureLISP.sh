@@ -304,7 +304,7 @@ s_builtins () {
     cons|car|cdr|eq|atom)
       SBUILTINSR=$1
       ;;
-    length|eval)
+    length)
       SBUILTINSR=$1
       ;;
     *)
@@ -446,12 +446,6 @@ s_apply () {
         s_length $CARR
         SAPPLYR=$SLENGTHR
         SLENGTHR=0
-        ;;
-      eval)
-        cadr $2
-        car $2
-        s_eval $CARR $CADRR
-        SAPPLYR=$SEVALR
         ;;
     esac
   else
