@@ -110,7 +110,7 @@ C:\Users\TAKIZAWA Yozo\busybox>
 	* `-sl`: no prompt and pre-loading init file
 	* `-nl`: prompt and no pre-loading init file
 
-See init.plsh and codes in examples directory for details.
+See `init.plsh` and codes in `examples` directory for details.
 
 (FYI, firstly implemented as a John McCarthy's Original Lisp evaluator but now a SICP's one)
 
