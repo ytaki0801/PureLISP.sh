@@ -8,20 +8,20 @@
 
 (def or (lambda (a b) (cond (a t) (t b))))
 
-(def not (lambda (a) (cond (a nil) (t t))))
-
 (def null (lambda (a) (eq a nil)))
+
+(def not null)
 
 ;;;; utility functions for list processing
 
 (def append2
   (lambda (a b)
-    (cond ((eq a nil) b)
+    (cond ((null a) b)
           (t (cons (car a) (append2 (cdr a) b))))))
 
 (def flatten
   (lambda (a)
-    (cond ((eq a nil) nil)
+    (cond ((null a) nil)
           (t (append2 (car a) (flatten (cdr a)))))))
 
 (def append (lambda a (flatten a)))
@@ -82,4 +82,44 @@
 (def cdar (lambda (x) (cdr (car x))))
 
 (def cddr (lambda (x) (cdr (cdr x))))
+
+;;;; Common Lisp compatibility
+
+(def defun
+  (macro (name args body)
+    (list 'def name (list 'lambda args body))))
+
+;;;; Scheme compatibility
+
+(def define
+  (macro (name . body)
+    (cond ((atom name) (list 'def name (car body)))
+          (t (cons 'defun
+                   (cons (car name)
+                         (cons (cdr name) body)))))))
+
+(def eq? eq)
+
+(def null? null)
+
+(def pair? (lambda (x) (not (atom x))))
+
+(def #t t)
+
+(def #f nil)
+
+(def else #t)
+
+;;;; other syntax sugars by macro
+
+(def if
+  (macro (condexp trueexp . falseexp)
+    (list 'cond (list condexp trueexp)
+      (cond ((null falseexp) (list 't 'nil))
+            (t (list 't (car falseexp)))))))
+
+(def let
+  (macro (vvs body)
+    (cons (list 'lambda (map car vvs) body)
+          (map cadr vvs))))
 

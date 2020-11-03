@@ -364,13 +364,15 @@ s_eval () {
       s_cond $CDRR $2
       SEVALR=$SCONDR
       ;;
-    lambda)
+    lambda|macro)
+      stackpush $CARR
       cons $2 nil
       caddr $1
       cons $CADDRR $CONSR
       cadr $1
       cons $CADRR $CONSR
-      cons lambda $CONSR
+      stackpop && CARR=$STACKPOPR
+      cons $CARR $CONSR
       SEVALR=$CONSR
       ;;
     def)
@@ -384,6 +386,18 @@ s_eval () {
       ;;
     *)
       s_eval $CARR $2
+
+      atom $SEVALR
+      if [ $ATOMR = nil ]; then
+        car $SEVALR
+        if [ $CARR = macro ]; then
+          cdr $1
+          s_apply $SEVALR $CDRR
+          s_eval $SAPPLYR $2
+          return
+        fi
+      fi
+
       stackpush $SEVALR
       cdr $1
       s_eargs $CDRR $2
@@ -458,10 +472,11 @@ s_apply () {
         cons $CONSR nil
         s_append $CONSR $CADDDRR
       fi
-    else
+    else # the arg is normal type (...)
       s_pair $CADRR $2
       s_append $SPAIRR $CADDDRR
     fi
+
     s_eval $CADDRR $SAPPENDR
     SAPPLYR=$SEVALR
   fi
