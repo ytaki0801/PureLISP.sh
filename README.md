@@ -99,9 +99,9 @@ C:\Users\TAKIZAWA Yozo\busybox>
 
 * Built-in functions in Pure LISP: `cons`, `car`, `cdr`, `atom`, `eq`
 * Special forms: `quote`, `cond` and lexically scoped `lambda`
-* Special form `def` to bind variables in global environment
+* Special form: `def` to bind variables in global environment
+* Special form not in Pure LISP: `macro` to do meta-programming
 * Built-in function not in Pure LISP: `length` to treat lists as numbers
-* Built-in function not in Pure LISP: `eval` to do meta-programming
 * Simple S-expression input and output functions
 * Simple REPL with `exit` command and comment notation `;`
 * Exec options:
@@ -110,12 +110,15 @@ C:\Users\TAKIZAWA Yozo\busybox>
 	* `-sl`: no prompt and pre-loading init file
 	* `-nl`: prompt and no pre-loading init file
 
+See init.plsh and codes in examples directory for details.
+
+(FYI, firstly implemented as a John McCarthy's Original Lisp evaluator but now a SICP's one)
+
 ## Shell Programming in this software
 
 * Conscells are firstly implemented to program as a metacircular evaluator
 * Pseudo-Array and Stack implementation by using gloval variables
 * Using pattern-matching, to do S-expression lexical analysis especially
-* Firstly implemented as a John McCarthy's Original Lisp evaluator but now a SICP's one
 
 ## Bugs and TODO
 
