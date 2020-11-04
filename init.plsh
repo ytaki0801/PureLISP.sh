@@ -110,6 +110,8 @@
 
 (def else #t)
 
+(def assq assoc)
+
 ;;;; other syntax sugars by macro
 
 (def if
