@@ -104,7 +104,7 @@ C:\Users\TAKIZAWA Yozo\busybox>
 * Built-in function not in Pure LISP: `length` to treat lists as numbers
 
 * Simple REPL with `exit` command, comment notation `;` and the following exec options
-	* default: prompt and pre-loading init file "init.plsh" in the current directory
+	* default: prompt and pre-loading init file `init.plsh` in the current directory
 	* `-snl` or `-s`: no prompt and no pre-loading init file
 	* `-sl`: no prompt and pre-loading init file
 	* `-nl`: prompt and no pre-loading init file
