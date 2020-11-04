@@ -322,7 +322,7 @@ s_lookup () {
   s_assq $1 $2
   s_null $SASSQR
   if [ $SNULLR = t ]; then
-    s_assq $1 $ENV
+    s_assq $1 $GENV
     s_null $SASSQR
     if [ $SNULLR = t ]; then
       SLOOKUPR=nil
@@ -380,8 +380,8 @@ s_eval () {
       s_eval $CADDRR $2
       cadr $1
       cons $CADRR $SEVALR
-      cons $CONSR $ENV
-      ENV=$CONSR
+      cons $CONSR $GENV
+      GENV=$CONSR
       SEVALR=$CADRR
       ;;
     *)
@@ -521,7 +521,7 @@ s_repl () {
 
 CNUM=0
 STACKNUM=0
-ENV=nil
+GENV=nil
 PROMPT=nil
 INITFILE=init.plsh
 
