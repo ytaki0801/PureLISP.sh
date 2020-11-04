@@ -98,27 +98,26 @@ C:\Users\TAKIZAWA Yozo\busybox>
 ## LISP Specification in this software
 
 * Built-in functions in Pure LISP: `cons`, `car`, `cdr`, `atom`, `eq`
-* Special forms: `quote`, `cond` and lexically scoped `lambda`
-* Special form: `def` to bind variables in global environment
+* Special forms in Pure LISP: `quote`, `cond` and lexically scoped `lambda`
+* Special form not in PureLISP: `def` to bind variables in global environment
 * Special form not in Pure LISP: `macro` to do meta-programming
 * Built-in function not in Pure LISP: `length` to treat lists as numbers
-* Simple S-expression input and output functions
-* Simple REPL with `exit` command and comment notation `;`
-* Exec options:
-	* no options: prompt and pre-loading init file "init.plsh" in the current directory
+
+* Simple REPL with `exit` command, comment notation `;` and the following exec options
+	* default: prompt and pre-loading init file "init.plsh" in the current directory
 	* `-snl` or `-s`: no prompt and no pre-loading init file
 	* `-sl`: no prompt and pre-loading init file
 	* `-nl`: prompt and no pre-loading init file
 
 See `init.plsh` and codes in `examples` directory for details.
 
-(FYI, firstly implemented as a John McCarthy's Original Lisp evaluator but now a SICP's one)
+(FYI, firstly implemented referring to a John McCarthy's Original Lisp evaluator but now a SICP's one)
 
 ## Shell Programming in this software
 
-* Conscells are firstly implemented to program as a metacircular evaluator
+* Conscells are firstly implemented to easy to program as a metacircular evaluator
 * Pseudo-Array and Stack implementation by using gloval variables
-* Using pattern-matching, to do S-expression lexical analysis especially
+* Using pattern-matching fully, to do S-expression lexical analysis especially
 
 ## Bugs and TODO
 
