@@ -59,7 +59,7 @@ exit
 
 printf "(fibonacci $COUNT) processing time test on $SHL $LISP\n\n"
 date
-printf "%s%s" "$COMMON" "$FIB1" | $SHL $LISP -s
+printf "%s%s" "$COMMON" "$FIB1" | $SHL $LISP -snl
 date
 printf "%s%s" "$COMMON" "$FIB2" | $SHL $LISP -s
 date
