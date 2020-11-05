@@ -9,8 +9,9 @@ inspired from
 [John McCarthy's 1960 paper](http://www-formal.stanford.edu/jmc/recursive/recursive.html),
 [Paul Graham's Common Lisp implementation](http://paulgraham.com/lispcode.html),
 [Lispkit Lisp](https://github.com/hanshuebner/secd/tree/master/lispkit),
-[MIT's Structure and Interpretation of Computer Programs](https://mitpress.mit.edu/sites/default/files/sicp/index.html)
-and [Peter Norvig's Lispy](https://norvig.com/lispy.html)
+[MIT's Structure and Interpretation of Computer Programs](https://mitpress.mit.edu/sites/default/files/sicp/index.html),
+[Peter Norvig's Lispy](https://norvig.com/lispy.html),
+and [The Julia Programming Language's femtolisp/tiny](https://github.com/JeffBezanson/femtolisp/tree/master/tiny)
 
 ## Purpose of this software
 
