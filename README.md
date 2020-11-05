@@ -20,7 +20,7 @@ and [The Julia Programming Language's femtolisp/tiny](https://github.com/JeffBez
 
 [![BusyBox_ash](https://img.shields.io/badge/BusyBox_ash-1.33.0-brightgreen)](https://www.busybox.net/)
 [![NetBSD_sh](https://img.shields.io/badge/NetBSD_sh-20181212-brightgreen)](http://cvsweb.netbsd.org/bsdweb.cgi/src/bin/sh/)
-[![dash](https://img.shields.io/badge/dash-0.5.10.2-brightgreen)](http://gondor.apana.org.au/~herbert/dash/)
+[![dash](https://img.shields.io/badge/dash-0.5.9-brightgreen)](http://gondor.apana.org.au/~herbert/dash/)
 [![NetBSD_ksh_(pdksh)](https://img.shields.io/badge/NetBSD_ksh_(pdksh)-v5.2.14_(not_supported)-red)](http://cvsweb.netbsd.org/bsdweb.cgi/src/bin/ksh/)
 [![ksh93%2frksh93](https://img.shields.io/badge/ksh93%2frksh93-93u+-brightgreen)](http://kornshell.org/)
 [![mksh](https://img.shields.io/badge/mksh-R59b-brightgreen)](http://www.mirbsd.org/mksh.htm)
