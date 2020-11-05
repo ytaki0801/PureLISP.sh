@@ -89,6 +89,10 @@
   (macro (name args body)
     (list 'def name (list 'lambda args body))))
 
+(def defmacro
+  (macro (name args body)
+    (list 'def name (list 'macro args body))))
+
 ;;;; Scheme compatibility
 
 (def define
