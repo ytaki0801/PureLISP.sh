@@ -3,7 +3,7 @@
 if [ ! $# = 3 ]; then
   printf "Usage: $0 SHELL LISP NUM\n"
   printf "Now using default settings\n"
-  SHL="dash"
+  SHL="sh"
   LISP="PureLISP.sh"
   COUNT=10
 else
