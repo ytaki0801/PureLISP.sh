@@ -21,7 +21,7 @@ cons () {
   eval CAR$CNUM=$1
   eval CDR$CNUM=$2
   CONSR=${CNUM}.conscell
-  CNUM=$((CNUM+1))
+  : $((CNUM++))
 }
 
 car () { eval CARR="\$CAR${1%%.*}"; }
@@ -74,7 +74,7 @@ s_strcons () {
 
 s_display () {
   eq $1 nil
-  case $EQR in (t
+  case $EQR in (t)
     printf "()"
   ;;(*)
     atom $1
@@ -93,7 +93,8 @@ s_display () {
 
 replace_all_posix() {
   set -- "$1" "$2" "$3" "$4" ""
-  until (case "$2" in ("${2#*"$3"}") exit 0;esac;exit 1); do
+  while :; do
+    case $2 in (${2#*$3}) break; esac
     set -- "$5$2" "${2#*"$3"}" "$3" "$4" "$5${2%%"$3"*}$4"
   done
 }
@@ -112,7 +113,7 @@ s_lex1 () {
   case "$sl1HEAE" in (' ') :
   ;;(*)
     eval "TOKEN$TNUM=\$sl1HEAD"
-    TNUM=$((TNUM+1))
+    : $((TNUM++))
   ;;esac
 
   case "$sl1REST" in (*'  ') :
@@ -147,7 +148,7 @@ s_syn0 () {
     SYNPOS=$((SYNPOS-1))
     SSYN0R=$1
   ;;(.)
-    SYNPOS=$((SYNPOS-1))
+    : $((SYNPOS--))
     s_syn
     car $1
     cons $SSYNR $CARR
@@ -161,7 +162,7 @@ s_syn0 () {
 
 s_syn () {
   eval "ssyt=\$TOKEN$SYNPOS"
-  SYNPOS=$((SYNPOS-1))
+  : $((SYNPOS--))
   case $ssyt in (")")
     s_syn0 nil
     s_quote $SSYN0R
@@ -175,7 +176,7 @@ s_syn () {
 s_read () {
   TNUM=0
   s_lex $1
-  SYNPOS=$((TNUM-1))
+  : $((TNUM--))
   s_syn
   SREADR=$SSYNR
 }
@@ -185,12 +186,12 @@ s_read () {
 
 stackpush () {
   eval STACK$STACKNUM=$1
-  STACKNUM=$((STACKNUM+1))
+  : $((STACKNUM++))
 }
 
 stackpop ()
 {
-  STACKNUM=$((STACKNUM-1))
+  : $((STACKNUM--))
   eval STACKPOPR="\$STACK$STACKNUM"
 }
 
@@ -277,7 +278,7 @@ s_assq () {
 s_length () {
   s_null $1
   case $SNULLR in (nil)
-    SLENGTHR=$((SLENGTHR+1))
+    : $((SLENGTHR++))
     cdr $1
     s_length $CDRR
   ;;esac
@@ -439,21 +440,21 @@ s_apply () {
     cadddr $1 # lenvs
 
     atom $CADRR
-    if [ $ATOMR = t ]; then
+    case $ATOMR in (t)
       s_null $CADRR
-      if [ $SNULLR = t ]; then
+      case $SNULLR in (t)
         # when the arg is ()
         s_append $CADDDRR nil
-      else
+      ;;(*)
         # when the arg is atom except nil
         cons $CADRR $2
         cons $CONSR nil
         s_append $CONSR $CADDDRR
-      fi
-    else # the arg is normal type (...)
+      ;;esac
+    ;;(*) # the arg is normal type (...)
       s_pair $CADRR $2
       s_append $SPAIRR $CADDDRR
-    fi
+    ;;esac
 
     s_eval $CADDRR $SAPPENDR
     SAPPLYR=$SEVALR
@@ -474,30 +475,26 @@ s_replread () {
 }
 
 s_repl () {
-  if [ "$PROMPT" = "t" ]; then
+  case "$PROMPT" in (t)
     printf "S> "
-  fi
+  ;;esac
   s_replread
-  if [ -z $SREPLREADR ]; then
+  case $SREPLREADR in ('')
     PROMPT=t
     s_repl < /dev/tty
-  else
-    case "$SREPLREADR" in
-      "exit")
-        exit 0
-        ;;
-      \;*)
-        s_repl
-        ;;
-      *)
-        s_read $SREPLREADR
-        s_eval $SREADR nil
-        s_display $SEVALR && printf $LF
-        SEVALR=nil
-        s_repl
-        ;;
-    esac
-  fi
+  ;;(*)
+    case "$SREPLREADR" in ("exit")
+      exit 0
+    ;;(\;*)
+      s_repl
+    ;;(*)
+      s_read $SREPLREADR
+      s_eval $SREADR nil
+      s_display $SEVALR && printf $LF
+      SEVALR=nil
+      s_repl
+    ;;esac
+  ;;esac
 }
 
 
@@ -509,12 +506,11 @@ GENV=nil
 PROMPT=nil
 INITFILE=init.plsh
 
-case "$1" in
-  "-s"|"-snl")
-    PROMPTOPTION=nil
-    LOADINITFILE=nil
-    ;;
-  "-sl")
+case "$1" in ("-s"|"-snl")
+  PROMPTOPTION=nil
+  LOADINITFILE=nil
+;;("-sl")
+# PLZ CONTINUE FROM HERE
     PROMPTOPTION=nil
     LOADINITFILE=t
     ;;
