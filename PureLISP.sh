@@ -132,7 +132,7 @@ s_quote () {
   ;;(*)
     eval "squox=\$TOKEN$SYNPOS"
     case $squox in (\')
-      SYNPOS=$((SYNPOS-1))
+      : $((SYNPOS--))
       cons $1 nil
       cons quote $CONSR
       SQUOTER=$CONSR
