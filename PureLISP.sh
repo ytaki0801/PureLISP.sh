@@ -510,22 +510,20 @@ case "$1" in ("-s"|"-snl")
   PROMPTOPTION=nil
   LOADINITFILE=nil
 ;;("-sl")
-# PLZ CONTINUE FROM HERE
-    PROMPTOPTION=nil
-    LOADINITFILE=t
-    ;;
-  "-nl")
-    PROMPTOPTION=t
-    LOADINITFILE=nil
-    ;;
-  *)
-    PROMPTOPTION=t
-    LOADINITFILE=t
-    ;;
-esac
+  PROMPTOPTION=nil
+  LOADINITFILE=t
+;;("-nl")
+  PROMPTOPTION=t
+  LOADINITFILE=nil
+;;(*)
+  PROMPTOPTION=t
+  LOADINITFILE=t
+;;esac
 
-if [ -e $INITFILE -a $LOADINITFILE = t ]; then
-  s_repl < $INITFILE
+if [ -e $INITFILE ]; then
+  case $LOADINITFILE in (t)
+    s_repl < $INITFILE
+  ;;esac
 fi
 
 PROMPT=$PROMPTOPTION
