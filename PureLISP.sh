@@ -11,7 +11,7 @@
 #
 
 IFS=''
-LF="$(printf \\012)"
+LF="$(printf \\012_)";LF=${LF%_}
 
 
 # Basic functions for conscell operations:
