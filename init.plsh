@@ -69,6 +69,14 @@
      (cond ((null L) i)
            (t (f (car L) (reduce f (cdr L) i))))))
 
+(def sublis
+  (lambda (al L)
+    (cond ((null L) nil)
+          (t (cons (let ((r (assoc (car L) al)))
+                     (cond ((null r) (car L))
+                           (t (cdr r))))
+                   (sublis al (cdr L)))))))
+
 ;;;; lambda calculus
 
 (def fix (lambda (f) (f (lambda (x) ((fix f) x)))))

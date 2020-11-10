@@ -1,0 +1,115 @@
+;;;; utility functions
+
+(def list (lambda x x))
+
+(def and (lambda (a b) (cond (a b) (t nil))))
+
+(def or (lambda (a b) (cond (a t) (t b))))
+
+(def null (lambda (a) (eq a nil)))
+
+(def not null)
+
+(def map
+  (lambda (f a . b)
+     (cond ((eq a nil) nil)
+           ((eq b nil)
+            (cons (f (car a))
+                  (map f (cdr a))))
+           (t
+            (cons (f (car a) (car (car b)))
+                  (map f (cdr a) (cdr (car b))))))))
+
+(def assoc
+  (lambda (k vs)
+     (cond ((null vs) nil)
+           ((eq (car (car vs)) k)
+            (car vs))
+           (t (assoc k (cdr vs))))))
+
+(def member
+  (lambda (k vs)
+     (cond ((null vs) nil)
+           ((eq (car vs) k) vs)
+           (t (member k (cdr vs))))))
+
+(def let
+  (macro (vvs body)
+    (cons (list 'lambda (map car vvs) body)
+          (map cadr vvs))))
+
+(def sublis
+  (lambda (al L)
+    (cond ((null L) nil)
+          (t (cons (let ((r (assoc (car L) al)))
+                     (cond ((null r) (car L))
+                           (t (cdr r))))
+                   (sublis al (cdr L)))))))
+
+;;;;
+;;;; pattern-matching demo ported from:
+;;;; https://github.com/norvig/paip-lisp/blob/master/docs/chapter5.md#52-pattern-matching
+;;;;
+
+(def varp
+  (lambda (x)
+    (cond ((atom x)
+           (let ((r (member x
+                     '(A B C D E F G H I J K L M N O P Q R S T U V W X Y Z))))
+             (cond ((null r) nil) (t t))))
+          (t nil))))
+
+(def eqlist
+  (lambda (a b)
+    (cond ((and (null a) (null b)) t)
+          ((or  (null a) (null b)) nil)
+          ((eq (car a) (car b)) (eqlist (cdr a) (cdr b)))
+          (t nil))))
+
+(def match-variable
+  (lambda (var input bindings)
+    (let ((binding (assoc var bindings)))
+      (cond ((not binding)
+             (cons (cons var input)
+                   (cond ((eq bindings t) nil)
+                         (t bindings))))
+            ((eqlist input (cdr binding)) bindings)
+            (t nil)))))
+
+(def pat-match
+  (lambda (pattern input bindings)
+    (cond ((varp pattern)
+           (match-variable pattern input bindings))
+          ((eq pattern input) bindings)
+          ((and (not (atom pattern)) (not (atom input)))
+           (pat-match (cdr pattern) (cdr input)
+             (pat-match (car pattern) (car input) bindings)))
+          (t nil))))
+
+(pat-match '(i need a X) '(i need a vacation) t)
+
+;=> ((X . vacation))
+
+(sublis (pat-match '(i need a X) '(i need a vacation) t)
+        '(what would it mean to you if you got a X ?))
+
+;=> (what would it mean to you if you got a vacation ?)
+
+(pat-match '(i need a X) '(i really need a vacation) t)
+
+;=> ()
+
+(pat-match '(this is easy) '(this is easy) t)
+
+;=> t
+
+(pat-match '(i need a . X) '(i need a long vacation) t)
+
+;=> ((X long vacation))
+
+(pat-match '(X need a . Y) '(i need a long vacation) t)
+
+;=> ((Y long vacation) (X . i))
+
+exit
+
