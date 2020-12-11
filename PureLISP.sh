@@ -11,8 +11,7 @@
 #
 
 IFS=''
-LF="
-"
+LF="$(printf \\012)"
 
 
 # Basic functions for conscell operations:
@@ -29,27 +28,29 @@ car () { eval CARR="\$CAR${1%%.*}"; }
 cdr () { eval CDRR="\$CDR${1%%.*}"; }
 
 atom () {
-  if [ "${1##*.}" = conscell ]; then
+  case "$1" in (*.conscell)
     ATOMR=nil
-  else
+  ;;(*)
     ATOMR=t
-  fi
+  ;;esac
 }
 
 eq () {
   atom $1
-  if [ $ATOMR = nil ]; then
+  case $ATOMR in (nil)
     EQR=nil
-  else
+  ;;(*)
     atom $2
-    if [ $ATOMR = nil ]; then
+    case $ATOM in (nil)
       EQR=nil
-    elif [ "$1" = "$2" ]; then
-      EQR=t
-    else
-      EQR=nil
-    fi
-  fi
+    ;;(*)
+      case "$1" in ("$2")
+        EQR=t
+      ;;(*)
+        EQR=nil
+      ;;esac
+    ;;esac
+  ;;esac
 }
 
 
@@ -59,32 +60,32 @@ s_strcons () {
   car $1 && s_display $CARR
   cdr $1
   eq $CDRR nil
-  if [ $EQR = t ]; then
+  case $EQR in (t)
     printf ''
-  else
+  ;;(*)
     atom $CDRR
-    if [ $ATOMR = t ]; then
+    case $ATOMR in (t)
       printf ' . %s' "$CDRR"
-    else
+    ;;(*)
       printf " " && s_strcons $CDRR
-    fi
-  fi
+    ;;esac
+  ;;esac
 }
 
 s_display () {
   eq $1 nil
-  if [ $EQR = t ]; then
+  case $EQR in (t)
     printf "()"
-  else
+  ;;(*)
     atom $1
-    if [ $ATOMR = t ]; then
+    case $ATOMR in (t)
       printf "$1"
-    else
+    ;;(*)
       printf "("
       s_strcons $1
       printf ")"
-    fi
-  fi
+    ;;esac
+  ;;esac
 }
 
 
@@ -108,14 +109,15 @@ s_lex1 () {
   sl1HEAD=${1%% *}
   sl1REST=${1#* }
 
-  if [ ! ${sl1HEAD} = " " ]; then
+  case "$sl1HEAD" in (''|' ') :
+  ;;(*)
     eval "TOKEN$TNUM=\$sl1HEAD"
     TNUM=$((TNUM+1))
-  fi
+  ;;esac
 
-  if [ ! ${sl1REST} = " " ]; then
-    s_lex1 $sl1REST
-  fi
+  case "$sl1REST" in (''|' ') :
+  ;;(*) s_lex1 $sl1REST
+  ;;esac
 }
 
 s_lex () { s_lex0 $1 && s_lex1 $sl0RET; }
@@ -124,50 +126,50 @@ s_lex () { s_lex0 $1 && s_lex1 $sl0RET; }
 # S-expression syntax analysis: s_syn
 
 s_quote () {
-  if [ $SYNPOS -ge 0 ]; then
+  case $SYNPOS in (0|-[0-9]*)
+    SQUOTER=$1
+  ;;(*)
     eval "squox=\$TOKEN$SYNPOS"
-    if [ $squox = "'" ]; then
+    case $squox in (\')
       SYNPOS=$((SYNPOS-1))
       cons $1 nil
       cons quote $CONSR
       SQUOTER=$CONSR
-    else
+    ;;(*)
       SQUOTER=$1
-    fi
-  else
-    SQUOTER=$1
-  fi
+    ;;esac
+  ;;esac
 }
 
 s_syn0 () {
   eval "ss0t=\$TOKEN$SYNPOS"
-  if [ $ss0t = "(" ]; then
+  case $ss0t in ("(")
     SYNPOS=$((SYNPOS-1))
     SSYN0R=$1
-  elif [ $ss0t = "." ]; then
+  ;;(.)
     SYNPOS=$((SYNPOS-1))
     s_syn
     car $1
     cons $SSYNR $CARR
     s_syn0 $CONSR
-  else
+  ;;(*)
     s_syn
     cons $SSYNR $1
     s_syn0 $CONSR
-  fi
+  ;;esac
 }
 
 s_syn () {
   eval "ssyt=\$TOKEN$SYNPOS"
   SYNPOS=$((SYNPOS-1))
-  if [ $ssyt = ")" ]; then
+  case $ssyt in (")")
     s_syn0 nil
     s_quote $SSYN0R
     SSYNR=$SQUOTER
-  else
+  ;;(*)
     s_quote $ssyt
     SSYNR=$SQUOTER
-  fi
+  ;;esac
 }
 
 s_read () {
@@ -206,15 +208,15 @@ s_null () { eq $1 nil && SNULLR=$EQR; }
 
 s_append () {
   s_null $1
-  if [ $SNULLR = t ]; then
+  case $SNULLR in (t)
     SAPPENDR=$2
-  else
+  ;;(*)
     cdr $1
     s_append $CDRR $2
     car $1
     cons $CARR $SAPPENDR
     SAPPENDR=$CONSR
-  fi
+  ;;esac
 }
 
 s_pair () {
@@ -222,14 +224,14 @@ s_pair () {
   stackpush $SNULLR
   s_null $2
   stackpop
-  if [ $STACKPOPR = t -o $SNULLR = t ]; then
+  case "$STACKPOPR $SNULLR" in (t" "*|*" "t)
     SPAIRR=nil
-  else
+  ;;(*)
     atom $1
     stackpush $ATOMR
     atom $2
     stackpop
-    if [ $STACKPOPR = nil -a $ATOMR = nil ]; then
+    case "$STACKPOPR $ATOMR" in (nil" "nil)
       cdr $1
       stackpush $CDRR
       cdr $2
@@ -242,161 +244,151 @@ s_pair () {
       cons $STACKPOPR $CARR
       cons $CONSR $SPAIRR
       SPAIRR=$CONSR
-    else
+    ;;(*)
       atom $1
-      if [ $ATOMR = t ]; then
+      case $ATOMR in (t)
         cons $1 $2
         cons $CONSR nil
         SPAIRR=$CONSR
-      else
+      ;;(*)
         SPAIRR=nil
-      fi
-    fi
-  fi
+      ;;esac
+    ;;esac
+  ;;esac
 }
 
 s_assq () {
   s_null $2
-  if [ $SNULLR = t ]; then
+  case $SNULLR in (t)
     SASSQR=nil
-  else
+  ;;(*)
     caar $2
     eq $CAARR $1
-    if [ $EQR = t ]; then
+    case $EQR in (t)
       cdar $2
       SASSQR=$CDARR
-    else
+    ;;(*)
       cdr $2
       s_assq $1 $CDRR
-    fi
-  fi
+    ;;esac
+  ;;esac
 }
 
 s_length () {
   s_null $1
-  if [ $SNULLR = nil ]; then
+  case $SNULLR in (nil)
     SLENGTHR=$((SLENGTHR+1))
     cdr $1
     s_length $CDRR
-  fi
+  ;;esac
 }
 
 s_cond () {
   caar $1
   s_eval $CAARR $2
-  if [ $SEVALR = t ]; then
+  case $SEVALR in (t)
     cadar $1
     stackpush $CADARR
     s_eval $CADARR $2
     stackpop && CADARR=$STACKPOPR
     SCONDR=$SEVALR
-  else
+  ;;(*)
     cdr $1
     s_cond $CDRR $2
-  fi
+  ;;esac
 }
 
 s_builtins () {
-  case $1 in
-    t|nil)
-      SBUILTINSR=$1
-      ;;
-    cons|car|cdr|eq|atom)
-      SBUILTINSR=$1
-      ;;
-    length)
-      SBUILTINSR=$1
-      ;;
-    *)
+  case $1 in (t|nil)
+    SBUILTINSR=$1
+  ;;(cons|car|cdr|eq|atom)
+    SBUILTINSR=$1
+  ;;(length)
+    SBUILTINSR=$1
+  ;;(*)
       SBUILTINSR=notbuiltins
-      ;;
-  esac
+  ;;esac
 }
 
 s_lookup () {
   s_builtins $1
-  if [ $SBUILTINSR = $1 ]; then
+  case $SBUILTINSR in ($1)
     SLOOKUPR=$1
     return
-  fi
+  ;;esac
   s_assq $1 $2
   s_null $SASSQR
-  if [ $SNULLR = t ]; then
+  case $SNULLR in (t)
     s_assq $1 $GENV
     s_null $SASSQR
-    if [ $SNULLR = t ]; then
+    case $SNULLR in (t)
       SLOOKUPR=nil
       return
-    fi
-  fi
+    ;;esac
+  ;;esac
   SLOOKUPR=$SASSQR
 }
 
 s_eargs () {
   s_null $1
-  if [ $SNULLR = t ]; then
+  case $SNULLR in (t)
     SEARGSR=nil
-  else
+  ;;(*)
     car $1 && s_eval $CARR $2
     stackpush $SEVALR
     cdr $1 && s_eargs $CDRR $2
     stackpop && SEVALR=$STACKPOPR
     cons $SEVALR $SEARGSR
     SEARGSR=$CONSR
-  fi
+  ;;esac
 }
 
 s_eval () {
   atom $1
-  if [ $ATOMR = t ]; then
+  case $ATOMR in (t)
     s_lookup $1 $2
     SEVALR=$SLOOKUPR
     return
-  fi
+  ;;esac
   car $1
-  case $CARR in
-    quote)
-      cadr $1
-      SEVALR=$CADRR
-      ;;
-    cond)
-      cdr $1
-      s_cond $CDRR $2
-      SEVALR=$SCONDR
-      ;;
-    lambda|macro)
-      stackpush $CARR
-      cons $2 nil
-      caddr $1
-      cons $CADDRR $CONSR
-      cadr $1
-      cons $CADRR $CONSR
-      stackpop && CARR=$STACKPOPR
-      cons $CARR $CONSR
-      SEVALR=$CONSR
-      ;;
-    def)
-      caddr $1
-      s_eval $CADDRR $2
-      cadr $1
-      cons $CADRR $SEVALR
-      cons $CONSR $GENV
-      GENV=$CONSR
-      SEVALR=$CADRR
-      ;;
-    *)
+  case $CARR in (quote)
+    cadr $1
+    SEVALR=$CADRR
+  ;;(cond)
+    cdr $1
+    s_cond $CDRR $2
+    SEVALR=$SCONDR
+  ;;(lambda|macro)
+    stackpush $CARR
+    cons $2 nil
+    caddr $1
+    cons $CADDRR $CONSR
+    cadr $1
+    cons $CADRR $CONSR
+    stackpop && CARR=$STACKPOPR
+    cons $CARR $CONSR
+    SEVALR=$CONSR
+  ;;(def)
+    caddr $1
+    s_eval $CADDRR $2
+    cadr $1
+    cons $CADRR $SEVALR
+    cons $CONSR $GENV
+    GENV=$CONSR
+    SEVALR=$CADRR
+  ;;(*)
       s_eval $CARR $2
 
       atom $SEVALR
-      if [ $ATOMR = nil ]; then
+      case $ATOMR in (nil)
         car $SEVALR
-        if [ $CARR = macro ]; then
+        case $CARR in (macro)
           cdr $1
           s_apply $SEVALR $CDRR
           s_eval $SAPPLYR $2
           return
-        fi
-      fi
+        ;;esac
+      ;;esac
 
       stackpush $SEVALR
       cdr $1
@@ -404,76 +396,68 @@ s_eval () {
       stackpop && SEVALR=$STACKPOPR
       s_apply $SEVALR $SEARGSR
       SEVALR=$SAPPLYR
-      ;;
-  esac
+  ;;esac
 }
 
 s_apply () {
   atom $1
-  if [ $ATOMR = t ]; then
+  case $ATOMR in (t)
     # builtin-funcs exec
-    case $1 in
-      cons)
-        cadr $2
-        car $2
-        cons $CARR $CADRR
-        SAPPLYR=$CONSR
-        ;;
-      car)
-        car $2
-        car $CARR
-        SAPPLYR=$CARR
-        ;;
-      cdr)
-        car $2
-        cdr $CARR
-        SAPPLYR=$CDRR
-        ;;
-      eq)
-        cadr $2
-        car $2
-        eq $CARR $CADRR
-        SAPPLYR=$EQR
-        ;;
-      atom)
-        car $2
-        atom $CARR
-        SAPPLYR=$ATOMR
-        ;;
-      length)
-        SLENGTHR=0
-        car $2
-        s_length $CARR
-        SAPPLYR=$SLENGTHR
-        SLENGTHR=0
-        ;;
-    esac
-  else
+    case $1 in (cons)
+      cadr $2
+      car $2
+      cons $CARR $CADRR
+      SAPPLYR=$CONSR
+    ;;(car)
+      car $2
+      car $CARR
+      SAPPLYR=$CARR
+    ;;(cdr)
+      car $2
+      cdr $CARR
+      SAPPLYR=$CDRR
+    ;;(eq)
+      cadr $2
+      car $2
+      eq $CARR $CADRR
+      SAPPLYR=$EQR
+    ;;(atom)
+      car $2
+      atom $CARR
+      SAPPLYR=$ATOMR
+    ;;(length)
+      SLENGTHR=0
+      car $2
+      s_length $CARR
+      SAPPLYR=$SLENGTHR
+      SLENGTHR=0
+    ;;esac
+  ;;(*)
     # lambda-expression exec
     cadr $1   # lvars
     caddr $1  # lbody
     cadddr $1 # lenvs
 
     atom $CADRR
-    if [ $ATOMR = t ]; then
+    case $ATOMR in (t)
       s_null $CADRR
-      if [ $SNULLR = t ]; then
+      case $SNULLR in (t)
         # when the arg is ()
         s_append $CADDDRR nil
-      else
+      ;;(*)
         # when the arg is atom except nil
         cons $CADRR $2
         cons $CONSR nil
         s_append $CONSR $CADDDRR
-      fi
-    else # the arg is normal type (...)
+      ;;esac
+    ;;(*) # the arg is normal type (...)
       s_pair $CADRR $2
       s_append $SPAIRR $CADDDRR
-    fi
+    ;;esac
 
     s_eval $CADDRR $SAPPENDR
     SAPPLYR=$SEVALR
-  fi
+  ;;esac
 }
 
 
@@ -482,38 +466,34 @@ s_apply () {
 s_replread () {
   SREPLREADR=""
   while read srplrd; do
-    if [ -z $srplrd ]; then
+    case $srplrd in ('')
       break
-    fi
+    esac
     SREPLREADR=$SREPLREADR$srplrd
   done
 }
 
 s_repl () {
-  if [ "$PROMPT" = "t" ]; then
+  case "$PROMPT" in (t)
     printf "S> "
-  fi
+  ;;esac
   s_replread
-  if [ -z $SREPLREADR ]; then
+  case $SREPLREADR in ('')
     PROMPT=t
     s_repl < /dev/tty
-  else
-    case "$SREPLREADR" in
-      "exit")
-        exit 0
-        ;;
-      \;*)
-        s_repl
-        ;;
-      *)
-        s_read $SREPLREADR
-        s_eval $SREADR nil
-        s_display $SEVALR && printf $LF
-        SEVALR=nil
-        s_repl
-        ;;
-    esac
-  fi
+  ;;(*)
+    case "$SREPLREADR" in ("exit")
+      exit 0
+    ;;(\;*)
+      s_repl
+    ;;(*)
+      s_read $SREPLREADR
+      s_eval $SREADR nil
+      s_display $SEVALR && printf "\n"
+      SEVALR=nil
+      s_repl
+    ;;esac
+  ;;esac
 }
 
 
@@ -525,27 +505,24 @@ GENV=nil
 PROMPT=nil
 INITFILE=init.plsh
 
-case "$1" in
-  "-s"|"-snl")
-    PROMPTOPTION=nil
-    LOADINITFILE=nil
-    ;;
-  "-sl")
-    PROMPTOPTION=nil
-    LOADINITFILE=t
-    ;;
-  "-nl")
-    PROMPTOPTION=t
-    LOADINITFILE=nil
-    ;;
-  *)
-    PROMPTOPTION=t
-    LOADINITFILE=t
-    ;;
-esac
+case "$1" in ("-s"|"-snl")
+  PROMPTOPTION=nil
+  LOADINITFILE=nil
+;;("-sl")
+  PROMPTOPTION=nil
+  LOADINITFILE=t
+;;("-nl")
+  PROMPTOPTION=t
+  LOADINITFILE=nil
+;;(*)
+  PROMPTOPTION=t
+  LOADINITFILE=t
+;;esac
 
-if [ -e $INITFILE -a $LOADINITFILE = t ]; then
-  s_repl < $INITFILE
+if [ -e $INITFILE ]; then
+  case $LOADINITFILE in (t)
+    s_repl < $INITFILE
+  ;;esac
 fi
 
 PROMPT=$PROMPTOPTION
