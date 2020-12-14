@@ -1,0 +1,21 @@
+(def append
+  (lambda (a b)
+    (cond ((eq a nil) b)
+          (t (cons (car a)
+                   (append (cdr a) b))))))
+
+(def N '(p p p p p p p p p p))
+
+(def 0 nil)
+
+(def 1 '(p))
+
+(length
+  (((lambda (g) (g g))
+    (lambda (g) (lambda (n a b)
+      (cond ((eq n 0) a)
+            (t ((g g) (cdr n) b (append a b)))))))
+   N 0 1))
+
+exit
+
