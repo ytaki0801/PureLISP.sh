@@ -97,7 +97,7 @@
 
 (pat-match '(i need a X) '(i really need a vacation) t)
 
-;=> ()
+;=> nil
 
 (pat-match '(this is easy) '(this is easy) t)
 

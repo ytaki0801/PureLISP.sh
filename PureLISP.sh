@@ -73,9 +73,9 @@ s_strcons () {
 }
 
 s_display () {
-  eq $1 nil
-  case $EQR in (t)
-    printf "()"
+  s_null $1
+  case $SNULLR in (t)
+    printf "nil"
   ;;(*)
     atom $1
     case $ATOMR in (t)
@@ -126,7 +126,7 @@ s_lex () { s_lex0 $1 && s_lex1 $sl0RET; }
 # S-expression syntax analysis: s_syn
 
 s_quote () {
-  case $SYNPOS in (0|-[0-9]*)
+  case $SYNPOS in (-[0-9]*)
     SQUOTER=$1
   ;;(*)
     eval "squox=\$TOKEN$SYNPOS"

@@ -28,7 +28,7 @@
 
 (mycdr s)
 
-; = must be hage by closure)
+; = must be hage by closure
 
 exit
 
