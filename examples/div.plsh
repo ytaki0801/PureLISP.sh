@@ -1,0 +1,23 @@
+(def list (lambda x x))
+
+(def defun
+  (macro (name args body)
+    (list 'def name
+          (list 'lambda args body))))
+
+(defun sub (x y)
+    (cond ((eq y '()) x)
+          (t (sub (cdr x) (cdr y)))))
+
+(defun les (x y)
+    (cond ((eq (sub (cons 'O x) y) nil) t)
+          (t nil)))
+
+(defun div (x y r)
+    (cond ((les x y) r)
+          (t (div (sub x y) y (cons 'O r)))))
+
+(div '(O O O O O O) '(O O O) '())
+
+exit
+
