@@ -137,3 +137,9 @@
     (cons (list 'lambda (map car vvs) body)
           (map cadr vvs))))
 
+(def define-macro
+  (macro (name . body)
+    (list 'def (car name)
+          (list 'macro (cdr name)
+                       (car body)))))
+
