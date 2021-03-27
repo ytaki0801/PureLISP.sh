@@ -97,6 +97,42 @@ s
 C:\Users\TAKIZAWA Yozo\busybox>
 ```
 
+You can also try REPL by using Docker image created from Busybox base image.
+
+```
+$ docker run --rm -it ytaki0801/plsh
+S> (def reverse-append
+     (lambda (x y)
+       (cond ((eq x nil) y)
+             (t (reverse-append
+                  (cdr x)
+                  (cons (car x) y))))))
+
+reverse-append
+S> (reverse-append '(a b c) '(x y z))
+
+(c b a x y z)
+S> (def reverse-list                            
+     (lambda (x)
+       (reverse-append x nil)))
+
+reverse-list
+S> (reverse-list '(a b c d e))
+
+(e d c b a)
+S> (def append-list
+     (lambda (x y)
+       (reverse-append (reverse-list x) y)))
+
+append-list
+S> (append-list '(a b c) '(x y z))
+
+(a b c x y z)
+S> exit
+
+$ 
+```
+
 ## LISP Specification in this software
 
 * Built-in functions in Pure LISP: `cons`, `car`, `cdr`, `atom`, `eq`
@@ -118,7 +154,7 @@ See `init.plsh` and codes in `examples` directory for details.
 ## Shell Programming in this software
 
 * Conscells are firstly implemented to easy to program as a metacircular evaluator
-* Pseudo-Array and Stack implementation by using gloval variables
+* Pseudo-Array and Stack implementation by using global variables
 * Using pattern-matching fully, to do S-expression lexical analysis especially
 
 ## Bugs and TODO
