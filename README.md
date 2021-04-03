@@ -15,7 +15,7 @@ inspired from
 [Peter Norvig's Lispy](https://norvig.com/lispy.html),
 and [The Julia Programming Language's femtolisp/tiny](https://github.com/JeffBezanson/femtolisp/tree/master/tiny)
 
-![demo](https://github.com/ytaki0801/PureLISP.sh/blob/master/plsh-demo.gif)
+![demo](https://raw.githubusercontent.com/ytaki0801/PureLISP.sh/main/plsh-demo.gif)
 
 ## Purpose of this software
 
