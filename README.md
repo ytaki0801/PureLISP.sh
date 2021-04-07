@@ -4,7 +4,8 @@
 
 * Hash tag on SNS: [`#PureLISP_sh`](https://twitter.com/hashtag/PureLISP_sh)
 * Docker image: `docker run --rm -it ytaki0801/plsh`
-* [PureLISP.js](https://ytaki0801.github.io/PureLISP.html), with same specification of PureLISP.sh
+* [PureLISP.js](https://ytaki0801.github.io/PureLISP.html): JavaScript version of PureLISP.sh
+* [Kilo-PureLISP](https://github.com/ytaki0801/Kilo-PureLISP): Kilo with C version of PureLISP.sh
 
 This software is a Pure LISP interpreter written in shell script conformed to POSIX shell,
 inspired from
