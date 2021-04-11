@@ -1,0 +1,122 @@
+; You can test by typing "sh PureLISP -snl < sample.plsh"
+
+; conscell operations
+
+(car (cdr '(a b c)))
+
+; currying by lexical scope
+
+((((lambda (x)
+     (lambda (y)
+       (lambda (z)
+         (cons x (cons y (cons z nil))))))
+   'a)
+  'b)
+ 'c)
+
+; simple Map function
+
+(def map1
+  (lambda (f a)
+     (cond ((eq a nil) nil)
+           (t (cons (f (car a))
+                    (map1 f (cdr a)))))))
+
+; association list
+
+(def al '((Apple . 120) (Orange . 210) (Lemmon . 180)))
+
+; higher-order function
+
+(map1 car al)
+
+(map1 cdr al)
+
+; atom variable of lambda
+
+(def list (lambda x x))
+
+(def cadr (lambda (x) (car (cdr x))))
+
+; definition of let by using macro
+
+(def let
+  (macro (vvs body)
+    (cons (list 'lambda (map1 car vvs) body)
+          (map1 cadr vvs))))
+
+(let ((x 'a) (y 'b)) (cons x y))
+
+(def null (lambda (x) (eq x nil)))
+
+; search association list
+
+(def assoc
+  (lambda (k vs)
+     (cond ((null vs) nil)
+           ((eq (car (car vs)) k)
+            (car vs))
+           (t (assoc k (cdr vs))))))
+
+(assoc 'Orange al)
+
+; implementation of Common Lisp sublis
+
+(def sublis
+  (lambda (al L)
+    (cond ((null L) nil)
+          (t (cons (let ((r (assoc (car L) al)))
+                     (cond ((null r) (car L))
+                           (t (cdr r))))
+                   (sublis al (cdr L)))))))
+
+(def sl '((x . I) (y . you)))
+
+(sublis sl '(x and y))
+
+(def revapp
+  (lambda (x y)
+    (cond ((eq x nil) y)
+          (t (revapp
+               (cdr x)
+               (cons (car x) y))))))
+
+(def reverse (lambda (x) (revapp x nil)))
+
+(reverse '(a b c d e))
+
+(def append
+  (lambda (x y)
+    (revapp (revapp x nil) y)))
+
+(append '(a b c) '(x y z))
+
+(def + append)
+
+(def 1- (lambda (x) (cdr x)))
+
+; lists as numbers
+
+(def 0 nil)
+
+(def 1 '(p))
+
+(def 5 '(p p p p p))
+
+(def N (+ 5 5))
+
+(length N)
+
+; Fibonacci number by fix-point combinator
+
+(length
+  (((lambda (g) (g g))
+      (lambda (g)
+        (lambda (n a b)
+          (cond ((eq n 0) a)
+                (t ((g g) (cdr n)
+                          b (append a b)))))))
+   N 0 1))
+
+exit
+
