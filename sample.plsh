@@ -47,13 +47,11 @@
 
 (let ((x 'a) (y 'b)) (cons x y))
 
-(def null (lambda (x) (eq x nil)))
-
 ; search association list
 
 (def assoc
   (lambda (k vs)
-     (cond ((null vs) nil)
+     (cond ((eq vs nil) nil)
            ((eq (car (car vs)) k)
             (car vs))
            (t (assoc k (cdr vs))))))
@@ -64,9 +62,9 @@
 
 (def sublis
   (lambda (al L)
-    (cond ((null L) nil)
+    (cond ((eq L nil) nil)
           (t (cons (let ((r (assoc (car L) al)))
-                     (cond ((null r) (car L))
+                     (cond ((null r nil) (car L))
                            (t (cdr r))))
                    (sublis al (cdr L)))))))
 
