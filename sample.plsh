@@ -64,7 +64,7 @@
   (lambda (al L)
     (cond ((eq L nil) nil)
           (t (cons (let ((r (assoc (car L) al)))
-                     (cond ((null r nil) (car L))
+                     (cond ((eq r nil) (car L))
                            (t (cdr r))))
                    (sublis al (cdr L)))))))
 
