@@ -197,12 +197,52 @@ stackpop ()
 
 # The evaluator: s_eval and utility functions
 
-caar () { car $1; car $CARR; CAARR=$CARR; }
-cadr () { cdr $1; car $CDRR; CADRR=$CARR; }
-cdar () { car $1; cdr $CARR; CDARR=$CDRR; }
-cadar () { car $1; cdr $CARR; car $CDRR; CADARR=$CARR; }
-caddr () { cdr $1; cdr $CDRR; car $CDRR; CADDRR=$CARR; }
-cadddr () { cdr $1; cdr $CDRR; cdr $CDRR; car $CDRR; CADDDRR=$CARR; }
+#caar () { car $1; car $CARR; CAARR=$CARR; }
+#cadr () { cdr $1; car $CDRR; CADRR=$CARR; }
+#cdar () { car $1; cdr $CARR; CDARR=$CDRR; }
+#cadar () { car $1; cdr $CARR; car $CDRR; CADARR=$CARR; }
+#caddr () { cdr $1; cdr $CDRR; car $CDRR; CADDRR=$CARR; }
+#cadddr () { cdr $1; cdr $CDRR; cdr $CDRR; car $CDRR; CADDDRR=$CARR; }
+
+caar ()
+{
+  eval CAAR_CARR="\$CAR${1%%.*}"
+  eval CAARR="\$CAR${CAAR_CARR%%.*}"
+}
+
+cadr ()
+{
+  eval CADR_CDRR="\$CDR${1%%.*}"
+  eval CADRR="\$CAR${CADR_CDRR%%.*}"
+}
+
+cdar ()
+{
+  eval CDAR_CARR="\$CAR${1%%.*}"
+  eval CDARR="\$CDR${CDAR_CARR%%.*}"
+}
+
+cadar ()
+{
+  eval CADAR_CARR="\$CAR${1%%.*}"
+  eval CADAR_CDARR="\$CDR${CADAR_CARR%%.*}"
+  eval CADARR="\$CAR${CADAR_CDARR%%.*}"
+}
+
+caddr ()
+{
+  eval CADDR_CDRR="\$CDR${1%%.*}"
+  eval CADDR_CDDRR="\$CDR${CADDR_CDRR%%.*}"
+  eval CADDRR="\$CAR${CADDR_CDDRR%%.*}"
+}
+
+cadddr ()
+{
+  eval CADDDR_CDRR="\$CDR${1%%.*}"
+  eval CADDDR_CDDRR="\$CDR${CADDDR_CDRR%%.*}"
+  eval CADDDR_CDDDRR="\$CDR${CADDDR_CDDRR%%.*}"
+  eval CADDDRR="\$CAR${CADDDR_CDDDRR%%.*}"
+}
 
 s_null () { eq $1 nil && SNULLR=$EQR; }
 
@@ -284,17 +324,19 @@ s_length () {
 }
 
 s_cond () {
-  caar $1
-  s_eval $CAARR $2
-  case $SEVALR in (t)
-    cadar $1
-    stackpush $CADARR
-    s_eval $CADARR $2
-    stackpop && CADARR=$STACKPOPR
-    SCONDR=$SEVALR
+  s_null $1
+  case $SNULLR in (t)
+    SCONDR=nil
   ;;(*)
-    cdr $1
-    s_cond $CDRR $2
+    caar $1
+    s_eval $CAARR $2
+    case $SEVALR in (t)
+      cadar $1
+      SCONDR=$CADARR
+    ;;(*)
+      cdr $1
+      s_cond $CDRR $2
+    ;;esac
   ;;esac
 }
 
@@ -306,7 +348,7 @@ s_builtins () {
   ;;(length)
     SBUILTINSR=$1
   ;;(*)
-      SBUILTINSR=notbuiltins
+    SBUILTINSR=notbuiltins
   ;;esac
 }
 
@@ -329,134 +371,166 @@ s_lookup () {
   SLOOKUPR=$SASSQR
 }
 
-s_eargs () {
+s_evals () {
   s_null $1
   case $SNULLR in (t)
-    SEARGSR=nil
+    SEVALSR=nil
   ;;(*)
     car $1 && s_eval $CARR $2
     stackpush $SEVALR
-    cdr $1 && s_eargs $CDRR $2
+    cdr $1 && s_evals $CDRR $2
     stackpop && SEVALR=$STACKPOPR
-    cons $SEVALR $SEARGSR
-    SEARGSR=$CONSR
+    cons $SEVALR $SEVALSR
+    SEVALSR=$CONSR
   ;;esac
 }
 
 s_eval () {
-  atom $1
-  case $ATOMR in (t)
-    s_lookup $1 $2
-    SEVALR=$SLOOKUPR
-    return
-  ;;esac
-  car $1
-  case $CARR in (quote)
-    cadr $1
-    SEVALR=$CADRR
-  ;;(cond)
-    cdr $1
-    s_cond $CDRR $2
-    SEVALR=$SCONDR
-  ;;(lambda|macro)
-    stackpush $CARR
-    cons $2 nil
-    caddr $1
-    cons $CADDRR $CONSR
-    cadr $1
-    cons $CADRR $CONSR
-    stackpop && CARR=$STACKPOPR
-    cons $CARR $CONSR
-    SEVALR=$CONSR
-  ;;(def)
-    caddr $1
-    s_eval $CADDRR $2
-    cadr $1
-    cons $CADRR $SEVALR
-    cons $CONSR $GENV
-    GENV=$CONSR
-    SEVALR=$CADRR
-  ;;(*)
-      s_eval $CARR $2
+  SEVALARG1=$1
+  SEVALARG2=$2
 
-      atom $SEVALR
-      case $ATOMR in (nil)
-        car $SEVALR
+  while true
+  do
+    atom $SEVALARG1
+    case $ATOMR in (t)
+      s_lookup $SEVALARG1 $SEVALARG2
+      SEVALR=$SLOOKUPR
+      break
+    ;;esac
+    car $SEVALARG1
+    case $CARR in (quote)
+      cadr $SEVALARG1
+      SEVALR=$CADRR
+      break
+    ;;(cond)
+      cdr $SEVALARG1
+      stackpush $SEVALARG2
+      s_cond $CDRR $SEVALARG2
+      stackpop && SEVALARG2=$STACKPOPR
+      SEVALARG1=$SCONDR
+    ;;(lambda|macro)
+      stackpush $CARR
+      cons $SEVALARG2 nil
+      caddr $SEVALARG1
+      cons $CADDRR $CONSR
+      cadr $SEVALARG1
+      cons $CADRR $CONSR
+      stackpop && CARR=$STACKPOPR
+      cons $CARR $CONSR
+      SEVALR=$CONSR
+      break
+    ;;(def)
+      caddr $SEVALARG1
+      stackpush $SEVALARG1
+      stackpush $SEVALARG2
+      s_eval $CADDRR $SEVALARG2
+      stackpop && SEVALARG2=$STACKPOPR
+      stackpop && SEVALARG1=$STACKPOPR
+      cadr $SEVALARG1
+      cons $CADRR $SEVALR
+      cons $CONSR $GENV
+      GENV=$CONSR
+      SEVALR=$CADRR
+      break
+    ;;(*)
+      car $SEVALARG1
+      stackpush $SEVALARG1
+      stackpush $SEVALARG2
+      s_eval $CARR $SEVALARG2
+      stackpop && SEVALARG2=$STACKPOPR
+      stackpop && SEVALARG1=$STACKPOPR
+      SEVALEFUNC=$SEVALR
+
+      stackpush $SEVALARG1
+      stackpush $SEVALARG2
+      stackpush $SEVALEFUNC
+      cdr $SEVALARG1
+      atom $SEVALEFUNC
+      case $ATOMR in (t)
+        s_evals $CDRR $SEVALARG2
+        SEVALFVALS=$SEVALSR
+      ;;(*)
+        car $SEVALEFUNC
         case $CARR in (macro)
-          cdr $1
-          s_apply $SEVALR $CDRR
-          s_eval $SAPPLYR $2
-          return
+          SEVALFVALS=$CDRR
+          SEVALFENVS=$SEVALARG2
+        ;;(*)
+          s_evals $CDRR $SEVALARG2
+          SEVALFVALS=$SEVALSR
         ;;esac
       ;;esac
+      stackpop && SEVALEFUNC=$STACKPOPR
+      stackpop && SEVALARG2=$STACKPOPR
+      stackpop && SEVALARG1=$STACKPOPR
 
-      stackpush $SEVALR
-      cdr $1
-      s_eargs $CDRR $2
-      stackpop && SEVALR=$STACKPOPR
-      s_apply $SEVALR $SEARGSR
-      SEVALR=$SAPPLYR
-  ;;esac
+      atom $SEVALEFUNC
+      case $ATOMR in (t)
+        s_apply $SEVALEFUNC $SEVALFVALS
+        SEVALR=$SAPPLYR
+        break
+      ;;(*)
+        cadr   $SEVALEFUNC && SEVALLVARS=$CADRR
+        caddr  $SEVALEFUNC && SEVALLBODY=$CADDRR
+        cadddr $SEVALEFUNC && SEVALLENVS=$CADDDRR
+        SEVALARG1=$SEVALLBODY
+
+        s_null $SEVALLVARS
+        case $SNULLR in (t)
+          SEVALARG2=$SEVALLENVS
+        ;;(*)
+          atom $SEVALLVARS
+          case $ATOMR in (t)
+            cons $SEVALLVARS $SEVALFVALS
+            cons $CONSR nil
+            s_append $CONSR $SEVALLENVS
+            SEVALARG2=$SAPPENDR
+          ;;(*)
+            s_pair $SEVALLVARS $SEVALFVALS
+            s_append $SPAIRR $SEVALLENVS
+            SEVALARG2=$SAPPENDR
+          ;;esac
+        ;;esac
+
+        car $SEVALEFUNC
+        case $CARR in (macro)
+          s_eval $SEVALARG1 $SEVALARG2
+          s_eval $SEVALR $SEVALFENVS
+        ;;esac
+      ;;esac
+    ;;esac
+
+  done
 }
 
 s_apply () {
-  atom $1
-  case $ATOMR in (t)
-    # builtin-funcs exec
-    case $1 in (cons)
-      cadr $2
-      car $2
-      cons $CARR $CADRR
-      SAPPLYR=$CONSR
-    ;;(car)
-      car $2
-      car $CARR
-      SAPPLYR=$CARR
-    ;;(cdr)
-      car $2
-      cdr $CARR
-      SAPPLYR=$CDRR
-    ;;(eq)
-      cadr $2
-      car $2
-      eq $CARR $CADRR
-      SAPPLYR=$EQR
-    ;;(atom)
-      car $2
-      atom $CARR
-      SAPPLYR=$ATOMR
-    ;;(length)
-      SLENGTHR=0
-      car $2
-      s_length $CARR
-      SAPPLYR=$SLENGTHR
-      SLENGTHR=0
-    ;;esac
-  ;;(*)
-    # lambda-expression exec
-    cadr $1   # lvars
-    caddr $1  # lbody
-    cadddr $1 # lenvs
-
-    atom $CADRR
-    case $ATOMR in (t)
-      s_null $CADRR
-      case $SNULLR in (t)
-        # when the arg is ()
-        s_append $CADDDRR nil
-      ;;(*)
-        # when the arg is atom except nil
-        cons $CADRR $2
-        cons $CONSR nil
-        s_append $CONSR $CADDDRR
-      ;;esac
-    ;;(*) # the arg is normal type (...)
-      s_pair $CADRR $2
-      s_append $SPAIRR $CADDDRR
-    ;;esac
-
-    s_eval $CADDRR $SAPPENDR
-    SAPPLYR=$SEVALR
+  case $1 in (cons)
+    cadr $2
+    car $2
+    cons $CARR $CADRR
+    SAPPLYR=$CONSR
+  ;;(car)
+    car $2
+    car $CARR
+    SAPPLYR=$CARR
+  ;;(cdr)
+    car $2
+    cdr $CARR
+    SAPPLYR=$CDRR
+  ;;(eq)
+    cadr $2
+    car $2
+    eq $CARR $CADRR
+    SAPPLYR=$EQR
+  ;;(atom)
+    car $2
+    atom $CARR
+    SAPPLYR=$ATOMR
+  ;;(length)
+    SLENGTHR=0
+    car $2
+    s_length $CARR
+    SAPPLYR=$SLENGTHR
+    SLENGTHR=0
   ;;esac
 }
 

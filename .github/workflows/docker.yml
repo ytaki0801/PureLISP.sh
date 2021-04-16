@@ -2,7 +2,7 @@ name: Docker image publishing
 
 on:
   push:
-    branches: [ docker ]
+    branches: [ main ]
 
 jobs:
   build:
