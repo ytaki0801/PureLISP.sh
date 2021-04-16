@@ -24,7 +24,7 @@
 
 ; association list
 
-(def al '((Apple . 120) (Orange . 210) (Lemmon . 180)))
+(def al '((Apple . 120) (Orange . 210) (Lemon . 180)))
 
 ; higher-order function
 
