@@ -33,6 +33,8 @@
            ((eq (car vs) k) vs)
            (t (member k (cdr vs))))))
 
+(def cadr (lambda (x) (car (cdr x))))
+
 (def let
   (macro (vvs body)
     (cons (list 'lambda (map car vvs) body)
